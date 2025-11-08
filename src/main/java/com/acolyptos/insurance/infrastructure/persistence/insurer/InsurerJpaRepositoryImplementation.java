@@ -3,7 +3,6 @@ package com.acolyptos.insurance.infrastructure.persistence.insurer;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,7 +15,7 @@ public class InsurerJpaRepositoryImplementation implements InsurerRepositoryInte
   }
 
   @Override
-  public Optional<Insurer> findInsurerByInsurerName(String insurerName) {
+  public Insurer findInsurerByInsurerName(String insurerName) {
     return insurerJpaRepository.findByInsurerName(insurerName);
   }
 
