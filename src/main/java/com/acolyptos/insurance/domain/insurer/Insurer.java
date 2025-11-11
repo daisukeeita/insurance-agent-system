@@ -35,20 +35,20 @@ public class Insurer {
   protected Insurer() {}
 
   /** Class constructor of the Insurer Entity. */
-  public Insurer(String insurerName, String insurerAddress) {
+  public Insurer(final String insurerName, final String insurerAddress) {
     this.insurerName = insurerName;
     this.insurerAddress = insurerAddress;
   }
 
-  public void setInsurerId(UUID insurerId) {
+  public void setInsurerId(final UUID insurerId) {
     this.insurerId = insurerId;
   }
 
-  public void setInsurerName(String insurerName) {
+  public void setInsurerName(final String insurerName) {
     this.insurerName = insurerName;
   }
 
-  public void setInsurerAddress(String insurerAddress) {
+  public void setInsurerAddress(final String insurerAddress) {
     this.insurerAddress = insurerAddress;
   }
 
