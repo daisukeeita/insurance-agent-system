@@ -3,6 +3,7 @@ package com.acolyptos.insurance.presentation.controller;
 import com.acolyptos.insurance.application.service.InsurerService;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRegisterRequest;
+import com.acolyptos.insurance.domain.response.ErrorResponse;
 import com.acolyptos.insurance.domain.response.SuccessResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -14,22 +15,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Rest controller class that accepts requests from the client and process the request bodies. */
 @RestController
 @RequestMapping("/api/v1/insurer")
 public class InsurerController {
 
   private final InsurerService insurerService;
 
-  public InsurerController(InsurerService insurerService) {
+  /**
+   * Constructor of the insurer controller class.
+   *
+   * @param insurerService injected insurer service class to be able to use its methods for
+   *     processing requests.
+   */
+  public InsurerController(final InsurerService insurerService) {
     this.insurerService = insurerService;
   }
 
+  /**
+   * Method for accepting the {@link InsurerRegisterRequest} from the client and pass it to a
+   * dedicated service method to create the {@link Insurer} entity and save it to the databse.
+   *
+   * @param insurerRegisterRequest the accepted request body from the client.
+   * @return {@link SuccessResponse} JSON body to the client if the process is successful,
+   * @throws ErrorResponse JSON body to the client if the process fails.
+   */
   @PostMapping("/createInsurer")
   public SuccessResponse<Insurer> createAndSaveInsurer(
-      @RequestBody @Valid InsurerRegisterRequest insurerRegisterRequest) {
-    Insurer insurer = insurerService.createInsurer(insurerRegisterRequest);
+      @RequestBody @Valid final InsurerRegisterRequest insurerRegisterRequest) {
+    final Insurer insurer = insurerService.createInsurer(insurerRegisterRequest);
 
-    SuccessResponse<Insurer> apiResponse =
+    final SuccessResponse<Insurer> apiResponse =
         new SuccessResponse<Insurer>(
             HttpStatus.CREATED.value(),
             HttpStatus.CREATED,
@@ -39,13 +55,21 @@ public class InsurerController {
     return apiResponse;
   }
 
+  /**
+   * Method for accepting the string from the client and pass it to a dedicated service method to
+   * find an {@link Insurer} entity from the database.
+   *
+   * @param insurerName the accepted request body/string from the client.
+   * @return {@link SuccessResponse} JSON body to the client if the process is successful.
+   * @throws ErrorResponse JSON body to the client if the process fails
+   */
   @GetMapping("/getInsurer/{insurerName}")
   public SuccessResponse<Insurer> findAndGetInsurer(
-      @PathVariable("insurerName") String insurerName) {
+      @PathVariable("insurerName") final String insurerName) {
 
-    Insurer insurer = insurerService.getInsurerByName(insurerName);
+    final Insurer insurer = insurerService.getInsurerByName(insurerName);
 
-    SuccessResponse<Insurer> apiResponse =
+    final SuccessResponse<Insurer> apiResponse =
         new SuccessResponse<Insurer>(
             HttpStatus.OK.value(), HttpStatus.OK, "Found an Insurer using " + insurerName, insurer);
 
