@@ -1,19 +1,18 @@
-// package com.acolyptos.insurance.domain.agent;
-//
-// import java.util.List;
-// import java.util.Optional;
-//
-// public interface AgentRepositoryInterface {
-//
-//   Agent registerAgent(Agent agent);
-//
-//   Optional<Agent> findAgentByUsername(String username);
-//
-//   Optional<Agent> findAgentByLicenseNumber(String licenseNumber);
-//
-//   List<Agent> findAllAgents();
-//
-//   void disableAgentByUsername(String username);
-//
-//   void disableAgentByLicenseNumber(String licenseNumber);
-// }
+package com.acolyptos.insurance.domain.agent;
+
+import java.util.List;
+
+public interface AgentRepositoryInterface {
+
+  Agent registerAgent(Agent agent);
+
+  Agent findAgentByUsername(String username);
+
+  Agent findAgentByLicenseNumber(String licenseNumber);
+
+  List<Agent> findAllAgents();
+
+  // void disableAgentByUsername(String username);
+  //
+  // void disableAgentByLicenseNumber(String licenseNumber);
+}
