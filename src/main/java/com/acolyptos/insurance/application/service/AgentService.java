@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.application.service;
 
 import com.acolyptos.insurance.domain.agent.Agent;
+import com.acolyptos.insurance.domain.agent.AgentLoginRequest;
 import com.acolyptos.insurance.domain.agent.AgentRegisterRequest;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
@@ -48,6 +49,17 @@ public class AgentService {
     agent.setLicenseNumber(agentRegisterRequest.getLicenseNumber());
 
     return agentRepositoryInterface.registerAgent(agent);
+  }
+
+  public Agent loginAgent(AgentLoginRequest agentLoginRequest) {
+    Agent agent = agentRepositoryInterface.findAgentByUsername(agentLoginRequest.getUsername());
+
+    if (agent == null) {
+      throw new EntityDoesNotExistException(
+          "Cannot find an Agent with username: " + "'" + agentLoginRequest.getUsername() + "'.");
+    }
+
+    return agentRepositoryInterface.findAgentByUsername(agentLoginRequest.getUsername());
   }
 
   public Agent getAgentByUsername(String username) {
