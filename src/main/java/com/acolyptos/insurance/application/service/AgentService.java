@@ -5,7 +5,9 @@ import com.acolyptos.insurance.domain.agent.AgentRegisterRequest;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
+import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,39 @@ public class AgentService {
   }
 
   public Agent getAgentByUsername(String username) {
-    return agentRepositoryInterface.findAgentByUsername(username);
+
+    if (username.trim().isEmpty() || username == null) {
+      throw new InvalidRequestBodyException("Agent's username is required.");
+    }
+
+    Agent agent = agentRepositoryInterface.findAgentByUsername(username);
+
+    if (agent == null) {
+      throw new EntityDoesNotExistException(
+          "Cannot find an Agent with username: " + "'" + username + "'.");
+    }
+
+    return agent;
+  }
+
+  public Agent getAgentByLicenseNumber(String licenseNumber) {
+
+    if (licenseNumber.trim().isEmpty() || licenseNumber == null) {
+      throw new InvalidRequestBodyException("Agent's license number is required.");
+    }
+
+    Agent agent = agentRepositoryInterface.findAgentByLicenseNumber(licenseNumber);
+
+    if (agent == null) {
+      throw new EntityDoesNotExistException(
+          "Cannot find an Agent with license number: " + "'" + licenseNumber + "'.");
+    }
+
+    return agent;
+  }
+
+  public List<Agent> getAllAgents() {
+    return agentRepositoryInterface.findAllAgents();
   }
 
   private String hashPassword(String password) {
