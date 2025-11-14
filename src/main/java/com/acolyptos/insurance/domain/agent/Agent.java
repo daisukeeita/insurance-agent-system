@@ -163,15 +163,9 @@ public class Agent {
         + insurer
         + ",\n\tusername: "
         + username
-        + ",\n\thashedPassword: "
-        + hashedPassword
         + ",\n\tlicenseNumber: "
         + licenseNumber
-        + ",\n\tcreatedAt: "
-        + createdAt
-        + ",\n\tupdatedAt: "
-        + updatedAt
-        + ",\n\tgetFullName(): "
+        + ",\n\tFullName(): "
         + getFullName()
         + "\n}";
   }
