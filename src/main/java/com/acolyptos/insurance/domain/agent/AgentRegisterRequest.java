@@ -133,13 +133,11 @@ public class AgentRegisterRequest {
   public String toString() {
     return "AgentRegisterRequest {\n\tusername: "
         + username
-        + ",\n\tpassword: "
-        + password
         + ",\n\tinsurer: "
         + insurer
         + ",\n\tlicenseNumber: "
         + licenseNumber
-        + ",\n\tdateHired: "
+        + ",\n\tfullName: "
         + getFullName()
         + "\n}";
   }
