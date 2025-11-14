@@ -3,6 +3,7 @@ package com.acolyptos.insurance.presentation.controller;
 import com.acolyptos.insurance.application.service.AgentService;
 import com.acolyptos.insurance.domain.agent.Agent;
 import com.acolyptos.insurance.domain.agent.AgentRegisterRequest;
+import com.acolyptos.insurance.domain.agent.AgentResponse;
 import com.acolyptos.insurance.domain.response.SuccessResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -27,31 +28,31 @@ public class AgentController {
 
   @PostMapping("/createAgent")
   @ResponseStatus(HttpStatus.CREATED)
-  public SuccessResponse<Agent> createAndSaveAgent(
+  public SuccessResponse<AgentResponse> createAndSaveAgent(
       @RequestBody @Valid final AgentRegisterRequest agentRegisterRequest) {
-    final Agent agent = agentService.createAgent(agentRegisterRequest);
+    final AgentResponse agent = agentService.createAgent(agentRegisterRequest);
 
-    return new SuccessResponse<Agent>(
+    return new SuccessResponse<AgentResponse>(
         HttpStatus.CREATED.value(), HttpStatus.CREATED, "Agent created successfully.", agent);
   }
 
   @GetMapping("/getAgentByUsername/{username}")
   @ResponseStatus(HttpStatus.FOUND)
-  public SuccessResponse<Agent> findAndGetAgentByUsername(
+  public SuccessResponse<AgentResponse> findAndGetAgentByUsername(
       @PathVariable("username") final String username) {
-    Agent agent = agentService.getAgentByUsername(username);
+    AgentResponse agent = agentService.getAgentByUsername(username);
 
-    return new SuccessResponse<Agent>(
+    return new SuccessResponse<AgentResponse>(
         HttpStatus.FOUND.value(), HttpStatus.FOUND, "Successfully found the Agent.", agent);
   }
 
   @GetMapping("/getAgentByLicenseNumber/{licenseNumber}")
   @ResponseStatus(HttpStatus.FOUND)
-  public SuccessResponse<Agent> findAndGetAgentByLicenseNumber(
+  public SuccessResponse<AgentResponse> findAndGetAgentByLicenseNumber(
       @PathVariable("licenseNumber") final String licenseNumber) {
-    Agent agent = agentService.getAgentByLicenseNumber(licenseNumber);
+    AgentResponse agent = agentService.getAgentByLicenseNumber(licenseNumber);
 
-    return new SuccessResponse<Agent>(
+    return new SuccessResponse<AgentResponse>(
         HttpStatus.FOUND.value(), HttpStatus.FOUND, "Successfully found the Agent.", agent);
   }
 
