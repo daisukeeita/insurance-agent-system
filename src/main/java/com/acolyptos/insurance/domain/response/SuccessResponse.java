@@ -36,6 +36,10 @@ public class SuccessResponse<T> {
     return data;
   }
 
+  public LocalDateTime getTimestamp() {
+    return timestamp;
+  }
+
   @Override
   public String toString() {
     return "SuccessResponse {\n\tsuccess: "
