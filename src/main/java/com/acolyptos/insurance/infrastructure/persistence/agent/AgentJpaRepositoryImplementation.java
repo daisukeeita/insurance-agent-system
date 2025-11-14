@@ -5,11 +5,13 @@ import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
+/** Repository class that implements the interface of {@link AgentRepositoryInterface}. */
 @Repository
 public class AgentJpaRepositoryImplementation implements AgentRepositoryInterface {
 
   private final AgentJpaRepository agentJpaRepository;
 
+  /** Constructor of the class with injected {@link AgentJpaRepository} to use its methods. */
   public AgentJpaRepositoryImplementation(AgentJpaRepository agentJpaRepository) {
     this.agentJpaRepository = agentJpaRepository;
   }
