@@ -32,9 +32,4 @@ public class AgentLoginRequest {
   public String getPassword() {
     return password;
   }
-
-  @Override
-  public String toString() {
-    return "AgentLoginRequest {\n\tusername: " + username + ",\n\tpassword: " + password + "\n}";
-  }
 }
