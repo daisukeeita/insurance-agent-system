@@ -1,20 +1,34 @@
 # Insurer Entity
 
+## Entity Relationship
+
 ```mermaid
+---
+config
+ layout:elk
+---
 erDiagram
- DATABASE-INSURER {
-  UUID insurer_id
-  String insurer_name
-  String insurer_address
- }
- CLASS-INSURER {
-  UUID insurerId
+ Insurer {
+  UUID insurerId PK "Primary Key"
   String insurerName
   String insurerAddress
  }
+ Agent {
+  UUID agentId PK "Primary Key"
+  Insurer insurer FK "Foreign Key to Insurer, referenced to insurerId"
+  String username
+  String hashedPassword
+  String firstName
+  String middleInitial
+  String lastName
+  String licenseNumber
+  LocalDateTime createdAt
+  LocalDateTime updatedAt
+ }
+ Insurer only one to one or more Agent : "Insurer has one or more Agent"
 ```
 
-## Class Relationship
+## Class Flow
 
 ```mermaid
 classDiagram
