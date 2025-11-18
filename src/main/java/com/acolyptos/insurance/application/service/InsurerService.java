@@ -50,7 +50,7 @@ public class InsurerService {
             insurerRegisterRequest.getInsurerName().trim(),
             insurerRegisterRequest.getInsurerAddress().trim());
 
-    return insurer;
+    return insurerRepositoryInterface.saveInsurer(insurer);
   }
 
   /**
