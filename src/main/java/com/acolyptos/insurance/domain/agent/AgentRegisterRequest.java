@@ -27,8 +27,8 @@ public class AgentRegisterRequest {
   @NotBlank(message = "Agent's License Number is required for registration.")
   private String licenseNumber;
 
-  // @NotNull(message = "Agent's hiring date is required for registration.")
-  // private LocalDate dateHired;
+  @NotBlank(message = "Agent's hiring date is required for registration.")
+  private String dateHired;
 
   /** Protecting the default constructor of the class. */
   protected AgentRegisterRequest() {}
@@ -51,7 +51,8 @@ public class AgentRegisterRequest {
       final String firstName,
       final String middleInitial,
       final String lastName,
-      final String licenseNumber) {
+      final String licenseNumber,
+      final String dateHired) {
     this.username = username;
     this.password = password;
     this.insurer = insurer;
@@ -59,6 +60,7 @@ public class AgentRegisterRequest {
     this.middleInitial = middleInitial;
     this.lastName = lastName;
     this.licenseNumber = licenseNumber;
+    this.dateHired = dateHired;
   }
 
   public void setUsername(final String username) {
@@ -87,6 +89,10 @@ public class AgentRegisterRequest {
 
   public void setLicenseNumber(final String licenseNumber) {
     this.licenseNumber = licenseNumber;
+  }
+
+  public void setDateHired(final String dateHired) {
+    this.dateHired = dateHired;
   }
 
   public String getUsername() {
@@ -121,13 +127,9 @@ public class AgentRegisterRequest {
     return licenseNumber;
   }
 
-  // public void setDateHired(final LocalDate dateHired) {
-  //   this.dateHired = dateHired;
-  // }
-
-  // public LocalDate getDateHired() {
-  //   return dateHired;
-  // }
+  public String getDateHired() {
+    return dateHired;
+  }
 
   @Override
   public String toString() {
