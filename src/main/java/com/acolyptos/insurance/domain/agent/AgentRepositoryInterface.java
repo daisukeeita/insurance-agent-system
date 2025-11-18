@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.domain.agent;
 
 import java.util.List;
+import java.util.UUID;
 
 /** The blueprint that will be used for Agent Repository. */
 public interface AgentRepositoryInterface {
@@ -28,6 +29,14 @@ public interface AgentRepositoryInterface {
    * @return {@link Agent} details of the agent upon successful database process.
    */
   Agent findAgentByLicenseNumber(String licenseNumber);
+
+  /**
+   * Method for looking to a specific agent from the database.
+   *
+   * @param agentId string that will be used to look for a specific agent.
+   * @return {@link Agent} details of the agent upon successful database process.
+   */
+  Agent findAgentById(UUID agentId);
 
   /**
    * Method for returning the lists of all registered agents.
