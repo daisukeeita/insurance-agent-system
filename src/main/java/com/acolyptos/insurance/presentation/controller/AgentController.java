@@ -40,7 +40,7 @@ public class AgentController {
   @ResponseStatus(HttpStatus.FOUND)
   public SuccessResponse<AgentResponse> findAndGetAgentByUsername(
       @PathVariable("username") final String username) {
-    AgentResponse agent = agentService.getAgentByUsername(username);
+    AgentResponse agent = agentService.getAgentByUsernameAndFilter(username);
 
     return new SuccessResponse<AgentResponse>(
         HttpStatus.FOUND.value(), HttpStatus.FOUND, "Successfully found the Agent.", agent);
@@ -50,7 +50,7 @@ public class AgentController {
   @ResponseStatus(HttpStatus.FOUND)
   public SuccessResponse<AgentResponse> findAndGetAgentByLicenseNumber(
       @PathVariable("licenseNumber") final String licenseNumber) {
-    AgentResponse agent = agentService.getAgentByLicenseNumber(licenseNumber);
+    AgentResponse agent = agentService.getAgentByLicenseNumberAndFilter(licenseNumber);
 
     return new SuccessResponse<AgentResponse>(
         HttpStatus.FOUND.value(), HttpStatus.FOUND, "Successfully found the Agent.", agent);
