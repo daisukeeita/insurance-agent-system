@@ -1,7 +1,5 @@
 package com.acolyptos.insurance.domain.agent;
 
-import com.acolyptos.insurance.domain.insurer.Insurer;
-import java.util.UUID;
 
 /**
  * Class that will be used to filter the details of the Agent entity before sending the Success
@@ -9,7 +7,7 @@ import java.util.UUID;
  */
 public class AgentResponse {
 
-  private UUID agentId;
+  private String agentId;
 
   private String username;
 
@@ -17,17 +15,17 @@ public class AgentResponse {
 
   private String licenseNumber;
 
-  private Insurer insurer;
+  private String insurerName;
 
   /** The default constructor for this class. */
   public AgentResponse() {}
 
-  public void setAgentId(UUID agentId) {
+  public void setAgentId(String agentId) {
     this.agentId = agentId;
   }
 
-  public void setInsurer(Insurer insurer) {
-    this.insurer = insurer;
+  public void setInsurerName(String insurerName) {
+    this.insurerName = insurerName;
   }
 
   public void setUsername(String username) {
@@ -42,7 +40,7 @@ public class AgentResponse {
     this.licenseNumber = licenseNumber;
   }
 
-  public UUID getAgentId() {
+  public String getAgentId() {
     return agentId;
   }
 
@@ -58,7 +56,7 @@ public class AgentResponse {
     return licenseNumber;
   }
 
-  public Insurer getInsurer() {
-    return insurer;
+  public String getInsurerName() {
+    return insurerName;
   }
 }
