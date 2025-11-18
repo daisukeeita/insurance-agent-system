@@ -31,4 +31,12 @@ public interface AgentJpaRepository extends JpaRepository<Agent, UUID> {
    * @return {@link Agent} lists details of the agent upon successful process.
    */
   Agent findByLicenseNumber(String licenseNumber);
+
+  /**
+   * Method for looking to a specific agent from the database.
+   *
+   * @param agentId string that will be used to look for a specific agent.
+   * @return {@link Agent} details of the agent upon successful database process.
+   */
+  Agent findByAgentId(UUID agentId);
 }
