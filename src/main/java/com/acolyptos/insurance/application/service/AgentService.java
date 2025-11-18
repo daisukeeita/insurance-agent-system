@@ -9,6 +9,8 @@ import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,7 @@ public class AgentService {
     }
 
     String hashedPassword = hashPassword(agentRegisterRequest.getPassword());
+    LocalDate dateHired = formatDate(agentRegisterRequest.getDateHired());
 
     Agent agent = new Agent(agentRegisterRequest.getUsername());
     agent.setHashedPassword(hashedPassword);
@@ -67,17 +70,9 @@ public class AgentService {
     agent.setMiddleInitial(agentRegisterRequest.getMiddleInitial());
     agent.setLastName(agentRegisterRequest.getLastName());
     agent.setLicenseNumber(agentRegisterRequest.getLicenseNumber());
+    agent.setDateHired(dateHired);
 
-    Agent savedAgent = agentRepositoryInterface.registerAgent(agent);
-
-    AgentResponse agentResponse = new AgentResponse();
-    agentResponse.setAgentId(savedAgent.getAgentId());
-    agentResponse.setUsername(savedAgent.getUsername());
-    agentResponse.setInsurer(savedAgent.getInsurer());
-    agentResponse.setFullName(savedAgent.getFullName());
-    agentResponse.setLicenseNumber(savedAgent.getLicenseNumber());
-
-    return agentResponse;
+    return filterAgentDetails(agentRepositoryInterface.registerAgent(agent));
   }
 
   /** Method for authenticating the agent. */
@@ -100,7 +95,7 @@ public class AgentService {
    * @throws InvalidRequestBodyException if the username is empty or null.
    * @throws EntityDoesNotExistException if there's no agent found from the database.
    */
-  public AgentResponse getAgentByUsername(String username) {
+  public AgentResponse getAgentByUsernameAndFilter(String username) {
 
     if (username.trim().isEmpty() || username == null) {
       throw new InvalidRequestBodyException("Agent's username is required.");
@@ -113,25 +108,18 @@ public class AgentService {
           "Cannot find an Agent with username: " + "'" + username + "'.");
     }
 
-    AgentResponse agentResponse = new AgentResponse();
-    agentResponse.setAgentId(agent.getAgentId());
-    agentResponse.setUsername(agent.getUsername());
-    agentResponse.setFullName(agent.getFullName());
-    agentResponse.setLicenseNumber(agent.getLicenseNumber());
-    agentResponse.setInsurer(agent.getInsurer());
-
-    return agentResponse;
+    return filterAgentDetails(agent);
   }
 
   /**
-   * Method to look for an Agent using its username.
+   * Method to look for an Agent using its license number.
    *
    * @param licenseNumber the string that will be used to look for the agent.
    * @return the filtered {@link AgentResponse} if the query is successful.
    * @throws InvalidRequestBodyException if the username is empty or null.
    * @throws EntityDoesNotExistException if there's no agent found from the database.
    */
-  public AgentResponse getAgentByLicenseNumber(String licenseNumber) {
+  public AgentResponse getAgentByLicenseNumberAndFilter(String licenseNumber) {
 
     if (licenseNumber.trim().isEmpty() || licenseNumber == null) {
       throw new InvalidRequestBodyException("Agent's license number is required.");
@@ -144,21 +132,31 @@ public class AgentService {
           "Cannot find an Agent with license number: " + "'" + licenseNumber + "'.");
     }
 
-    AgentResponse agentResponse = new AgentResponse();
-    agentResponse.setAgentId(agent.getAgentId());
-    agentResponse.setUsername(agent.getUsername());
-    agentResponse.setFullName(agent.getFullName());
-    agentResponse.setLicenseNumber(agent.getLicenseNumber());
-    agentResponse.setInsurer(agent.getInsurer());
-
-    return agentResponse;
+    return filterAgentDetails(agent);
   }
 
   public List<Agent> getAllAgents() {
     return agentRepositoryInterface.findAllAgents();
   }
 
+  private AgentResponse filterAgentDetails(Agent agent) {
+    AgentResponse agentResponse = new AgentResponse();
+    agentResponse.setAgentId(agent.getAgentId().toString());
+    agentResponse.setUsername(agent.getUsername());
+    agentResponse.setFullName(agent.getFullName());
+    agentResponse.setLicenseNumber(agent.getLicenseNumber());
+    agentResponse.setInsurerName(agent.getInsurer().getInsurerName());
+
+    return agentResponse;
+  }
+
   private String hashPassword(String password) {
     return UUID.randomUUID().toString();
+  }
+
+  private LocalDate formatDate(String dateHired) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    return LocalDate.parse(dateHired, formatter);
   }
 }
