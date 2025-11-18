@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -56,17 +56,17 @@ public class Agent {
   @Column(name = "license_number", nullable = false, length = 50, unique = true)
   private String licenseNumber;
 
-  // @NotNull(message = "Agent's `date hired` was not provided.")
-  // @Column(name = "date_hired", nullable = false)
-  // private LocalDate dateHired;
+  @NotNull(message = "Agent's `date hired` was not provided.")
+  @Column(name = "date_hired", nullable = false)
+  private LocalDate dateHired;
 
   @NotNull(message = "Agent's creation date is required.")
   @Column(name = "created_at", nullable = false, updatable = false, insertable = true)
-  private LocalDateTime createdAt;
+  private LocalDate createdAt;
 
   @NotNull(message = "Agent's modification date is required.")
   @Column(name = "updated_at", nullable = false, updatable = true, insertable = true)
-  private LocalDateTime updatedAt;
+  private LocalDate updatedAt;
 
   /** Protecting the default Class Constructor of the Agent. */
   protected Agent() {}
@@ -74,8 +74,8 @@ public class Agent {
   /** Class constructor of the Agent Obejct. */
   public Agent(String username) {
     this.username = username;
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
+    this.createdAt = LocalDate.now();
+    this.updatedAt = LocalDate.now();
   }
 
   public void setAgentId(final UUID agentId) {
@@ -110,12 +110,16 @@ public class Agent {
     this.licenseNumber = licenseNumber;
   }
 
-  public void setCreatedAt(final LocalDateTime createdAt) {
+  public void setCreatedAt(final LocalDate createdAt) {
     this.createdAt = createdAt;
   }
 
-  public void setUpdatedAt(final LocalDateTime updatedAt) {
+  public void setUpdatedAt(final LocalDate updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  public void setDateHired(final LocalDate dateHired) {
+    this.dateHired = dateHired;
   }
 
   public UUID getAgentId() {
@@ -147,13 +151,9 @@ public class Agent {
     return licenseNumber;
   }
 
-  // public void setDateHired(final LocalDate dateHired) {
-  //   this.dateHired = dateHired;
-  // }
-
-  // public LocalDate getDateHired() {
-  //   return dateHired;
-  // }
+  public LocalDate getDateHired() {
+    return dateHired;
+  }
 
   @Override
   public String toString() {
