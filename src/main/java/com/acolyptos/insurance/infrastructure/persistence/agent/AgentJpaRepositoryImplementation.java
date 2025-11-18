@@ -3,6 +3,7 @@ package com.acolyptos.insurance.infrastructure.persistence.agent;
 import com.acolyptos.insurance.domain.agent.Agent;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 /** Repository class that implements the interface of {@link AgentRepositoryInterface}. */
@@ -34,5 +35,10 @@ public class AgentJpaRepositoryImplementation implements AgentRepositoryInterfac
   @Override
   public List<Agent> findAllAgents() {
     return agentJpaRepository.findAll();
+  }
+
+  @Override
+  public Agent findAgentById(UUID agentId) {
+    return agentJpaRepository.findByAgentId(agentId);
   }
 }
