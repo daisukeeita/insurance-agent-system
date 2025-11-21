@@ -56,15 +56,15 @@ public class Agent {
   @Column(name = "license_number", nullable = false, length = 50, unique = true)
   private String licenseNumber;
 
-  @NotNull(message = "Agent's `date hired` was not provided.")
+  @NotNull(message = "Agent's hiring date was not provided.")
   @Column(name = "date_hired", nullable = false)
   private LocalDate dateHired;
 
-  @NotNull(message = "Agent's creation date is required.")
+  @NotNull(message = "Agent's creation date was not provided.")
   @Column(name = "created_at", nullable = false, updatable = false, insertable = true)
   private LocalDate createdAt;
 
-  @NotNull(message = "Agent's modification date is required.")
+  @NotNull(message = "Agent's modification date was not provided.")
   @Column(name = "updated_at", nullable = false, updatable = true, insertable = true)
   private LocalDate updatedAt;
 
