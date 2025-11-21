@@ -3,6 +3,7 @@ package com.acolyptos.insurance.application.service;
 import com.acolyptos.insurance.domain.agent.Agent;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
+import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.inventory.CertificateOfCoverage;
 import com.acolyptos.insurance.domain.inventory.CocRepositoryInterface;
 import com.acolyptos.insurance.domain.inventory.CocRequestBody;
@@ -10,6 +11,8 @@ import com.acolyptos.insurance.domain.inventory.CocResponseBody;
 import com.acolyptos.insurance.domain.inventory.Status;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,81 @@ public class InventoryService {
     }
 
     return filterCocDetails(instantiateAndSaveCertificateOfCoverage(agent, cocRequestBody));
+  }
+
+  public List<CocResponseBody> createAndSaveListCertificateOfCoverage(
+      List<CocRequestBody> listCocRequestBody) {
+
+    List<CertificateOfCoverage> listCertificateOfCoverage = new ArrayList<>();
+    List<CertificateOfCoverage> listSavedCertificates = new ArrayList();
+    List<CocResponseBody> listCocResponseBody = new ArrayList<>();
+
+    listCocRequestBody.forEach(
+        request -> {
+          UUID agentId = UUID.fromString(request.getAgentId());
+
+          Agent agent = agentRepositoryInterface.findAgentById(agentId);
+          if (agent == null) {
+            throw new EntityDoesNotExistException(
+                "Could not find any Agent with id: " + "'" + agentId + "'.");
+          }
+
+          LocalDate dateIssued = convertToLocalDate(request.getDateIssued());
+
+          CertificateOfCoverage certificateOfCoverage =
+              new CertificateOfCoverage(request.getCocNumber());
+          certificateOfCoverage.setStatus(Status.AVAILABLE);
+          certificateOfCoverage.setProcuredBy(agent);
+          certificateOfCoverage.setDateIssued(dateIssued);
+          certificateOfCoverage.setBatchReference(request.getBatchReference());
+
+          listCertificateOfCoverage.add(certificateOfCoverage);
+        });
+
+    listSavedCertificates.addAll(
+        cocRepositoryInterface.saveAllCertificateOfCoverage(listCertificateOfCoverage));
+
+    listSavedCertificates.forEach(
+        certificate -> {
+          CocResponseBody cocResponseBody = new CocResponseBody(certificate.getCocNumber());
+          cocResponseBody.setProcuredBy(certificate.getProcuredBy().getFullName());
+          cocResponseBody.setStatus(certificate.getStatus().toString());
+          cocResponseBody.setDateIssued(certificate.getDateIssued().toString());
+          cocResponseBody.setBatchReference(certificate.getBatchReference());
+
+          listCocResponseBody.add(cocResponseBody);
+        });
+
+    return listCocResponseBody;
+  }
+
+  public CocResponseBody retrieveCertificateOfCoverageById(String cocNumber) {
+
+    if (cocNumber.trim().isEmpty() || cocNumber == null) {
+      throw new InvalidRequestBodyException("COC Number was not provided.");
+    }
+
+    CertificateOfCoverage certificateOfCoverage =
+        cocRepositoryInterface.getCertificateOfCoverageByNumber(cocNumber);
+    if (certificateOfCoverage == null) {
+      throw new EntityDoesNotExistException(
+          "Cannot find a Certificate of Coverage using: " + "'" + cocNumber + "'.");
+    }
+
+    return filterCocDetails(certificateOfCoverage);
+  }
+
+  public List<CocResponseBody> retrieveAllCertificates() {
+    List<CocResponseBody> listOfCoc = new ArrayList<>();
+
+    cocRepositoryInterface
+        .getAllCertificateOfCoverage()
+        .forEach(
+            certificate -> {
+              listOfCoc.add(filterCocDetails(certificate));
+            });
+
+    return listOfCoc;
   }
 
   private LocalDate convertToLocalDate(String localDate) {
