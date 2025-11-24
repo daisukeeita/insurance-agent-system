@@ -5,6 +5,7 @@ import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.inventory.CertificateOfCoverage;
+import com.acolyptos.insurance.domain.inventory.CocPageResponse;
 import com.acolyptos.insurance.domain.inventory.CocRepositoryInterface;
 import com.acolyptos.insurance.domain.inventory.CocRequestBody;
 import com.acolyptos.insurance.domain.inventory.CocResponseBody;
@@ -14,6 +15,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,7 +53,7 @@ public class InventoryService {
       List<CocRequestBody> listCocRequestBody) {
 
     List<CertificateOfCoverage> listCertificateOfCoverage = new ArrayList<>();
-    List<CertificateOfCoverage> listSavedCertificates = new ArrayList();
+    List<CertificateOfCoverage> listSavedCertificates = new ArrayList<>();
     List<CocResponseBody> listCocResponseBody = new ArrayList<>();
 
     listCocRequestBody.forEach(
@@ -117,6 +122,43 @@ public class InventoryService {
             });
 
     return listOfCoc;
+  }
+
+  public CocPageResponse<CocResponseBody> retrieveAndFilterPaginatedCertificates(
+      int pageNumber, int pageSize, String sortBy) {
+
+    List<CocResponseBody> listOfCocResponseBody = new ArrayList<>();
+
+    Sort sort = Sort.by(sortBy).descending();
+    Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+    Page<CertificateOfCoverage> paginatedCertificates =
+        cocRepositoryInterface.getPaginatedCertificateOfCoverage(pageable);
+
+    paginatedCertificates
+        .getContent()
+        .forEach(
+            certificate -> {
+              CocResponseBody responseBody = new CocResponseBody(certificate.getCocNumber());
+              responseBody.setBatchReference(certificate.getBatchReference());
+              responseBody.setDateIssued(certificate.getDateIssued().toString());
+              responseBody.setProcuredBy(certificate.getProcuredBy().getFullName());
+              responseBody.setStatus(certificate.getStatus().toString());
+
+              listOfCocResponseBody.add(responseBody);
+            });
+
+    return new CocPageResponse<CocResponseBody>(
+        listOfCocResponseBody,
+        paginatedCertificates.getPageable().getPageNumber(),
+        paginatedCertificates.getPageable().getPageSize(),
+        paginatedCertificates.getTotalPages(),
+        paginatedCertificates.getTotalElements());
+  }
+
+  public Page<CertificateOfCoverage> retrievePaginatedCertificates(int pageNumber, int pageSize) {
+
+    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    return cocRepositoryInterface.getPaginatedCertificateOfCoverage(pageable);
   }
 
   private LocalDate convertToLocalDate(String localDate) {
