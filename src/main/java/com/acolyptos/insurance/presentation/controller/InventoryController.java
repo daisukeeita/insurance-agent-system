@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.presentation.controller;
 
 import com.acolyptos.insurance.application.service.InventoryService;
+import com.acolyptos.insurance.domain.inventory.CocPageResponse;
 import com.acolyptos.insurance.domain.inventory.CocRequestBody;
 import com.acolyptos.insurance.domain.inventory.CocResponseBody;
 import com.acolyptos.insurance.domain.response.SuccessResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,6 +69,15 @@ public class InventoryController {
         HttpStatus.FOUND,
         "Successfully retrieved a Certificate of Coverage.",
         coc);
+  }
+
+  @GetMapping("/paginateCertificates")
+  @ResponseStatus(HttpStatus.FOUND)
+  public CocPageResponse<CocResponseBody> getPaginatedCertificates(
+      @RequestParam(defaultValue = "0") int pageNumber,
+      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(defaultValue = "cocNumber") String sortBy) {
+    return inventoryService.retrieveAndFilterPaginatedCertificates(pageNumber, pageSize, sortBy);
   }
 
   @GetMapping("/getAllCertificates")
