@@ -10,7 +10,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "policies")
@@ -49,9 +51,9 @@ public class Policy {
   @NotBlank(message = "Customer's Chassis Number was not provided under Policy Entity.")
   private String chassisNumber;
 
-  // @Column(name = "premium_amount", nullable = false, precision = 10, scale = 2)
-  // @NotNull(message = "Policy's amount was not provided.")
-  // private double premiumAmount;
+  @Column(name = "premium_amount", nullable = false, precision = 6, scale = 2)
+  @NotNull(message = "Policy's amount was not provided.")
+  private BigDecimal premiumAmount;
 
   @Column(name = "sale_timestamp", nullable = false)
   @NotNull(message = "Policy's date and time was not provided.")
@@ -59,7 +61,7 @@ public class Policy {
 
   @Column(name = "insurer_transaction_reference", nullable = true, length = 50)
   @NotBlank(message = "Insurer's Transaction Reference was not provided under Policy Entity.")
-  private String insurerTransactionReference;
+  private String insurerBindingTransactionReference;
 
   /** Protecting the Policy Entity default Class Constructor. */
   protected Policy() {}
@@ -72,17 +74,103 @@ public class Policy {
       String customerName,
       String plateNumber,
       String chassisNumber,
-      // double premiumAmount,
-      String insurerTransactionReference) {
+      BigDecimal premiumAmount,
+      LocalDateTime saleTimestamp,
+      String insurerBindingTransactionReference) {
     this.policyId = policyId;
     this.certificateOfCoverage = certificateOfCoverage;
     this.agent = agent;
     this.customerName = customerName;
     this.plateNumber = plateNumber;
     this.chassisNumber = chassisNumber;
-    // this.premiumAmount = premiumAmount;
-    this.insurerTransactionReference = insurerTransactionReference;
+    this.premiumAmount = premiumAmount;
+    this.saleTimestamp = saleTimestamp;
+    this.insurerBindingTransactionReference = insurerBindingTransactionReference;
+  }
 
-    this.saleTimestamp = LocalDateTime.now();
+  public void setPolicyId(String policyId) {
+    this.policyId = policyId;
+  }
+
+  public void setCertificateOfCoverage(CertificateOfCoverage certificateOfCoverage) {
+    this.certificateOfCoverage = certificateOfCoverage;
+  }
+
+  public void setAgent(Agent agent) {
+    this.agent = agent;
+  }
+
+  public void setCustomerName(String customerName) {
+    this.customerName = customerName;
+  }
+
+  public void setPlateNumber(String plateNumber) {
+    this.plateNumber = plateNumber;
+  }
+
+  public void setChassisNumber(String chassisNumber) {
+    this.chassisNumber = chassisNumber;
+  }
+
+  public void setPremiumAmount(BigDecimal premiumAmount) {
+    this.premiumAmount = premiumAmount;
+  }
+
+  public void setTimestamp(LocalDateTime saleTimestamp) {
+    this.saleTimestamp = saleTimestamp;
+  }
+
+  public void setInsurerBindingTransactionReference(String insurerBindingTransactionReference) {
+    this.insurerBindingTransactionReference = insurerBindingTransactionReference;
+  }
+
+  public String getPolicyId() {
+    return policyId;
+  }
+
+  public CertificateOfCoverage getCertificateOfCoverage() {
+    return certificateOfCoverage;
+  }
+
+  public Agent getAgent() {
+    return agent;
+  }
+
+  public String getCustomerName() {
+    return customerName;
+  }
+
+  public String getPlateNumber() {
+    return plateNumber;
+  }
+
+  public String getChassisNumber() {
+    return chassisNumber;
+  }
+
+  public BigDecimal getPremiumAmount() {
+    return premiumAmount;
+  }
+
+  public LocalDateTime getSaleTimestamp() {
+    return saleTimestamp;
+  }
+
+  public String getInsurerBindingTransactionReference() {
+    return insurerBindingTransactionReference;
+  }
+
+  /** Converting Sale's Timestamp to String Type. */
+  public String getConvertedSaleTimestamp() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MMD-dd HH:mm");
+    return saleTimestamp.format(formatter);
+  }
+
+  public String getAgentFullName() {
+    return agent.getFullName();
+  }
+
+  public String getAttachedCocNumber() {
+    return certificateOfCoverage.getCocNumber();
   }
 }
