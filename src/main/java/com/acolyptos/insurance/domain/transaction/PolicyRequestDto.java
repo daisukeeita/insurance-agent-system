@@ -130,7 +130,7 @@ public class PolicyRequestDto {
   }
 
   public String getCustomerFullName() {
-    if (customerMiddleName.trim().isEmpty() || customerMiddleName == null) {
+    if (customerMiddleName == null || customerMiddleName.trim().isEmpty()) {
       return customerFirstName + " " + customerLastName;
     }
 
