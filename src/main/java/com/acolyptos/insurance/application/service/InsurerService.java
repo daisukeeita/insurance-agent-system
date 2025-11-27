@@ -1,81 +1,58 @@
 package com.acolyptos.insurance.application.service;
 
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
-import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
-import com.acolyptos.insurance.domain.insurer.InsurerRegisterRequest;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
+import com.acolyptos.insurance.domain.insurer.InsurerRequestDto;
+import com.acolyptos.insurance.domain.insurer.InsurerResponseDto;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-/**
- * The service class for Insurer Entity, it processes passed arguments/objects before saving it to
- * the database or retrieving an entity from the database.
- */
 @Service
 public class InsurerService {
 
   private final InsurerRepositoryInterface insurerRepositoryInterface;
 
-  /**
-   * The class constructor of the Insurer Service.
-   *
-   * @param insurerRepositoryInterface injected class to make the service use its methods for
-   *     database.
-   */
   public InsurerService(InsurerRepositoryInterface insurerRepositoryInterface) {
     this.insurerRepositoryInterface = insurerRepositoryInterface;
   }
 
-  /**
-   * Method that will be used to process the passed object and saves the entity to the databse.
-   *
-   * @param insurerRegisterRequest passed object to process its property before saving it to the
-   *     database.
-   * @return {@link Insurer} if the process is successful.
-   * @throws EntityAlreadyExistsException if the name property returns an entity after // * checking
-   *     from the database.
-   */
-  public Insurer createInsurer(InsurerRegisterRequest insurerRegisterRequest) {
+  public InsurerResponseDto createInsurer(InsurerRequestDto insurerRequestDto) {
 
-    boolean exists = checkInsurerIfExists(insurerRegisterRequest.getInsurerName());
+    String insurerName = insurerRequestDto.getInsurerName().trim();
 
-    if (exists) {
-      throw new EntityAlreadyExistsException("Insurer already exists.");
+    boolean insurerDoesExists =
+        insurerRepositoryInterface.checkInsurerIfExistsByInsurerName(insurerName);
+
+    if (insurerDoesExists) {
+      throw new EntityAlreadyExistsException(
+          "The Insurer: '" + insurerName + "' already exists in the database.'");
     }
 
     Insurer insurer =
-        new Insurer(
-            insurerRegisterRequest.getInsurerName().trim(),
-            insurerRegisterRequest.getInsurerAddress().trim());
+        new Insurer(insurerRequestDto.getInsurerName(), insurerRequestDto.getInsurerAddress());
 
-    return insurerRepositoryInterface.saveInsurer(insurer);
+    Insurer savedInsurer = insurerRepositoryInterface.saveInsurer(insurer);
+
+    InsurerResponseDto insurerResponseDto = new InsurerResponseDto();
+    insurerResponseDto.setInsurerId(savedInsurer.getInsurerId().toString());
+    insurerResponseDto.setInsurerName(savedInsurer.getInsurerName());
+    insurerResponseDto.setInsurerAddress(savedInsurer.getInsurerAddress());
+
+    return insurerResponseDto;
   }
 
-  /**
-   * Method that will be used to find an entity using a passed string.
-   *
-   * @param insurerName the passed string the will used to look for an existing entity.
-   * @return {@link Insurer} if the entity exists.
-   * @throws InvalidRequestBodyException if the passed string is invalid.
-   * @throws EntityDoesNotExistException if the entity doesn't exist on the database.
-   */
-  public Insurer getInsurerByName(String insurerName) {
+  public InsurerResponseDto retrieveInsurerByName(String insurerName) {
 
-    if (insurerName.trim().isEmpty() || insurerName == null) {
+    if (insurerName == null || insurerName.trim().isEmpty()) {
       throw new InvalidRequestBodyException(
-          "Insurer name is required before looking for an Insurer.");
+          "Insurer Name is required to find and retrieve the data.");
     }
 
-    Insurer insurer = insurerRepositoryInterface.findInsurerByInsurerName(insurerName);
+    InsurerResponseDto insurerResponseDto = new InsurerResponseDto();
 
-    if (insurer == null) {
-      throw new EntityDoesNotExistException(
-          "The Insurer trying to find using " + insurerName + " does not exist in the database.");
-    }
-
-    return insurer;
+    return insurerResponseDto;
   }
 
   public List<Insurer> getAllInsurer() {
