@@ -3,12 +3,15 @@ package com.acolyptos.insurance.infrastructure.persistence.insurer;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
- * The repository class that implements the {@link InsurerRepositoryInterface} to follow the
- * 'blueprint' and injects the {@link InsurerJpaRepository} to be able to access the database
- * easily.
+ * The implementation of the {@link InsurerRepositoryInterface} that uses {@link
+ * InsurerJpaRepository} to interact with the database.
  */
 @Repository
 public class InsurerJpaRepositoryImplementation implements InsurerRepositoryInterface {
@@ -16,17 +19,12 @@ public class InsurerJpaRepositoryImplementation implements InsurerRepositoryInte
   private final InsurerJpaRepository insurerJpaRepository;
 
   /**
-   * Class constructor of the repository class.
+   * Constructs the repository implementation and injects the necessary JPA component.
    *
-   * @param insurerJpaRepository injected Jpa repository interface to use the simplified methods.
+   * @param insurerJpaRepository The Spring Data JPA repository used for direct database access.
    */
   public InsurerJpaRepositoryImplementation(InsurerJpaRepository insurerJpaRepository) {
     this.insurerJpaRepository = insurerJpaRepository;
-  }
-
-  @Override
-  public Insurer findInsurerByInsurerName(String insurerName) {
-    return insurerJpaRepository.findByInsurerName(insurerName);
   }
 
   @Override
@@ -35,7 +33,32 @@ public class InsurerJpaRepositoryImplementation implements InsurerRepositoryInte
   }
 
   @Override
-  public List<Insurer> findAllInsurers() {
+  public Optional<Insurer> getInsurerByInsurerName(String insurerName) {
+    return insurerJpaRepository.findByInsurerName(insurerName);
+  }
+
+  @Override
+  public Optional<Insurer> getInsurerById(UUID insurerId) {
+    return insurerJpaRepository.findById(insurerId);
+  }
+
+  @Override
+  public boolean checkInsurerIfExistsById(UUID insurerId) {
+    return insurerJpaRepository.existsById(insurerId);
+  }
+
+  @Override
+  public boolean checkInsurerIfExistsByInsurerName(String insurerName) {
+    return insurerJpaRepository.existsByInsurerName(insurerName);
+  }
+
+  @Override
+  public Page<Insurer> getPaginatedInsurers(Pageable pageable) {
+    return insurerJpaRepository.findAll(pageable);
+  }
+
+  @Override
+  public List<Insurer> getAllInsurers() {
     return insurerJpaRepository.findAll();
   }
 }
