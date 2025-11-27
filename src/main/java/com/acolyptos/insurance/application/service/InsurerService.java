@@ -1,12 +1,12 @@
 package com.acolyptos.insurance.application.service;
 
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
+import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
 import com.acolyptos.insurance.domain.insurer.InsurerRequestDto;
 import com.acolyptos.insurance.domain.insurer.InsurerResponseDto;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,23 +50,19 @@ public class InsurerService {
           "Insurer Name is required to find and retrieve the data.");
     }
 
+    Insurer insurer =
+        insurerRepositoryInterface
+            .getInsurerByInsurerName(insurerName)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "The insurer: '" + insurerName + "' does not exist in the database."));
+
     InsurerResponseDto insurerResponseDto = new InsurerResponseDto();
+    insurerResponseDto.setInsurerId(insurer.getInsurerId().toString());
+    insurerResponseDto.setInsurerName(insurer.getInsurerName());
+    insurerResponseDto.setInsurerAddress(insurer.getInsurerAddress());
 
     return insurerResponseDto;
-  }
-
-  public List<Insurer> getAllInsurer() {
-    return insurerRepositoryInterface.findAllInsurers();
-  }
-
-  private boolean checkInsurerIfExists(String insurerName) {
-
-    Insurer insurer = insurerRepositoryInterface.findInsurerByInsurerName(insurerName);
-
-    if (insurer != null) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }
