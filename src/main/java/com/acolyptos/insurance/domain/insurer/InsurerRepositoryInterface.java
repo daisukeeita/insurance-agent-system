@@ -1,30 +1,66 @@
 package com.acolyptos.insurance.domain.insurer;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-/** The 'blueprint' of the insurer repository. */
+/** Repository interface for managing {@link Insurer} entities. */
 public interface InsurerRepositoryInterface {
 
   /**
-   * Method that will be used to save the Insurer Entity to the database.
+   * Persists the given {@link Insurer} entity to the database.
    *
-   * @param insurer passed object that will be saved to the databse.
-   * @return {@link Insurer} if the object passed was saved successfully.
+   * @param insurer The entity to be saved.
+   * @return The saved {@link Insurer} entity.
    */
   Insurer saveInsurer(Insurer insurer);
 
   /**
-   * Method that will be used to find a single Insurer Entity from the database.
+   * Finds a single {@link Insurer} entity by its name.
    *
-   * @param insurerName passed string that will be used to find an Insurer.
-   * @return {@link Insurer} if the Insurer exists, else null.
+   * @param insurerName The name of the insurer to find.
+   * @return An {@link Optional} containing the Insurer if found, otherwise empty.
    */
-  Insurer findInsurerByInsurerName(String insurerName);
+  Optional<Insurer> getInsurerByInsurerName(String insurerName);
 
   /**
-   * Method that will be used to find all of the insurers saved in the databse.
+   * Finds a single {@link Insurer} entity by its unique ID.
    *
-   * @return lists of all {@link Insurer}, else an empty list.
+   * @param insurerId The unique ID of the insurer.
+   * @return An {@link Optional} containing the Insurer if found, otherwise empty.
    */
-  List<Insurer> findAllInsurers();
+  Optional<Insurer> getInsurerById(UUID insurerId);
+
+  /**
+   * Checks if an {@link Insurer} entity with the given unique ID exists in the database.
+   *
+   * @param insurerId The unique ID of the insurer to check for existence.
+   * @return true if an insurer exists with the given unique ID, otherwise false.
+   */
+  boolean checkInsurerIfExistsById(UUID insurerId);
+
+  /**
+   * Checks if an {@link Insurer} entity with the given name exists in the database.
+   *
+   * @param insurerName The name of the insurer to check for existence.
+   * @return true if an insurer exists with the given name, otherwise false.
+   */
+  boolean checkInsurerIfExistsByInsurerName(String insurerName);
+
+  /**
+   * Retrieves a paginated list of all {@link Insurer} entities.
+   *
+   * @param pageable The pagination information of (number, size, sort).
+   * @return A {@link Page} of {@link Insurer} entities.
+   */
+  Page<Insurer> getPaginatedInsurers(Pageable pageable);
+
+  /**
+   * Retrieves all {@link Insurer} entities from the database.
+   *
+   * @return A list of all {@link Insurer} entities.
+   */
+  List<Insurer> getAllInsurers();
 }
