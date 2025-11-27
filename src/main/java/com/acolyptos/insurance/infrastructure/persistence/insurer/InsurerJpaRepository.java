@@ -1,28 +1,29 @@
 package com.acolyptos.insurance.infrastructure.persistence.insurer;
 
 import com.acolyptos.insurance.domain.insurer.Insurer;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Interface class that extends the {@link JpaRepository} to be able to use simplified data access
- * methods.
+ * Spring Data JPA Repository for the {@link Insurer} entity, providing standard CRUD and custom
+ * lookup methods.
  */
 public interface InsurerJpaRepository extends JpaRepository<Insurer, UUID> {
 
   /**
-   * Custom Jpa repository method that saves an entity.
+   * Finds an {@link Insurer} entity by its name.
    *
-   * @param insurer passed object that will be used to save an entity.
-   * @return {@link Insurer} if the process is successful.
+   * @param insurerName The name of the insurer to search for.
+   * @return An {@link Optional} containing the Insurer if found, otherwise empty.
    */
-  Insurer save(Insurer insurer);
+  Optional<Insurer> findByInsurerName(String insurerName);
 
   /**
-   * Custom Jpa repository method that finds an entity using the passed string.
+   * Checks if an {@link Insurer} entity exists with the given name.
    *
-   * @param insurerName passed string that will be used to find the entity from the database.
-   * @return {@link Insurer} if the process is successful, else null.
+   * @param insurerName The name of the insurer to check for existence.
+   * @return true if an Insurer with that name exists, otherwise false.
    */
-  Insurer findByInsurerName(String insurerName);
+  boolean existsByInsurerName(String insurerName);
 }
