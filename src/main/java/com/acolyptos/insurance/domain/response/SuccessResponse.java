@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.domain.response;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.http.HttpStatus;
 
 public class SuccessResponse<T> {
@@ -36,8 +37,13 @@ public class SuccessResponse<T> {
     return data;
   }
 
-  public LocalDateTime getTimestamp() {
-    return timestamp;
+  // public LocalDateTime getTimestamp() {
+  //   return timestamp;
+  // }
+
+  public String getFormattedTimestamp() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    return timestamp.format(formatter);
   }
 
   @Override
