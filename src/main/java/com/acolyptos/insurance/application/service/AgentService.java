@@ -9,6 +9,7 @@ import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
+import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,18 +21,20 @@ import org.springframework.stereotype.Service;
 public class AgentService {
 
   private final AgentRepositoryInterface agentRepositoryInterface;
-  private final InsurerService insurerService;
+  private final InsurerRepositoryInterface insurerRepositoryInterface;
 
   /**
    * Constructor for Agent Service class.
    *
    * @param agentRepositoryInterface injected interface to have an access to database.
-   * @param insurerService injected service class for insurer to have an access to insurer entity.
+   * @param insurerRepositoryInterface injected service class for insurer to have an access to
+   *     insurer entity.
    */
   public AgentService(
-      AgentRepositoryInterface agentRepositoryInterface, InsurerService insurerService) {
+      AgentRepositoryInterface agentRepositoryInterface,
+      InsurerRepositoryInterface insurerRepositoryInterface) {
     this.agentRepositoryInterface = agentRepositoryInterface;
-    this.insurerService = insurerService;
+    this.insurerRepositoryInterface = insurerRepositoryInterface;
   }
 
   /**
@@ -54,11 +57,14 @@ public class AgentService {
           "This agent is already exists with username" + " '" + checkIfExists.getUsername() + "'.");
     }
 
-    Insurer insurer = insurerService.getInsurerByName(agentRegisterRequest.getInsurer());
-    if (insurer == null) {
-      throw new EntityDoesNotExistException(
-          "Cannot find an Insurer with the name " + agentRegisterRequest.getInsurer());
-    }
+    Insurer insurer =
+        insurerRepositoryInterface
+            .getInsurerByInsurerName(agentRegisterRequest.getInsurer())
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Cannot find an Insurer with the name "
+                            + agentRegisterRequest.getInsurer()));
 
     String hashedPassword = hashPassword(agentRegisterRequest.getPassword());
     LocalDate dateHired = formatDate(agentRegisterRequest.getDateHired());
