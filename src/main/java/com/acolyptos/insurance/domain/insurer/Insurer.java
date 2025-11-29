@@ -19,25 +19,22 @@ import java.util.UUID;
 @Table(name = "insurers")
 public class Insurer {
 
-  /** The unique identifier (Primary Key) for the insurer. Generated automatically as a UUID. */
   @Id
   @Column(name = "insurer_id", nullable = false)
   @NotNull(message = "Insurer's ID is required.")
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID insurerId;
 
-  /** The official, unique name of the insurer. Mapped to a non-nullable, unique column. */
   @NotBlank(message = "Name of the Insurer should not be blank.")
   @Column(name = "insurer_name", nullable = false, length = 100, unique = true)
   private String insurerName;
 
-  /** The primary business address of the insurer. Mapped to a non-nullable column. */
   @NotBlank(message = "Address of the Insurer should not be blank.")
   @Column(name = "insurer_address", nullable = false, length = 255)
   private String insurerAddress;
 
   /**
-   * Default constructor required by the JPA/Hibernate. Protected. to prevent direct instantiation.
+   * Default constructor required by the JPA/Hibernate. Protected to prevent direct instantiation.
    */
   protected Insurer() {}
 
