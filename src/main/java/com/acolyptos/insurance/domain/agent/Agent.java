@@ -15,8 +15,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 /**
- * Agent Entity that represents the Insurance Agent Details and its relationship to their Insurance
- * Company/Agency.
+ * Represents an Agent entity stored in the "agents" database table. This entity holds the core
+ * details about the Insurance's Agent.
  */
 @Entity
 @Table(name = "agents")
@@ -68,10 +68,16 @@ public class Agent {
   @Column(name = "updated_at", nullable = false, updatable = true, insertable = true)
   private LocalDate updatedAt;
 
-  /** Protecting the default Class Constructor of the Agent. */
+  /**
+   * Default constructor required by the JPA/Hibernate. Protected to prevent direct instantiation.
+   */
   protected Agent() {}
 
-  /** Class constructor of the Agent Obejct. */
+  /**
+   * Constructs a new Agent entity with required initial data.
+   *
+   * @param username The username credential of the agent, it must be unique.
+   */
   public Agent(String username) {
     this.username = username;
     this.createdAt = LocalDate.now();
