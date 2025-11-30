@@ -28,7 +28,7 @@ public interface InsurerRepositoryInterface {
   /**
    * Finds a single {@link Insurer} entity by its unique ID.
    *
-   * @param insurerId The unique ID of the insurer.
+   * @param insurerId The unique ID of the insurer to find.
    * @return An {@link Optional} containing the Insurer if found, otherwise empty.
    */
   Optional<Insurer> getInsurerById(UUID insurerId);
