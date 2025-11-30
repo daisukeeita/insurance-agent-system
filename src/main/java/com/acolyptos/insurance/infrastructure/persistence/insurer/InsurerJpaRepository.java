@@ -23,7 +23,7 @@ public interface InsurerJpaRepository extends JpaRepository<Insurer, UUID> {
    * Checks if an {@link Insurer} entity exists with the given name.
    *
    * @param insurerName The name of the insurer to check for existence.
-   * @return true if an Insurer with that name exists, otherwise false.
+   * @return true if an Insurer with the given name exists, otherwise false.
    */
   boolean existsByInsurerName(String insurerName);
 }
