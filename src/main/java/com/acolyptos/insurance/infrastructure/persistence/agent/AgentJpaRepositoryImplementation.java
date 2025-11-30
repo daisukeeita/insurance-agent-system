@@ -3,42 +3,63 @@ package com.acolyptos.insurance.infrastructure.persistence.agent;
 import com.acolyptos.insurance.domain.agent.Agent;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-/** Repository class that implements the interface of {@link AgentRepositoryInterface}. */
 @Repository
 public class AgentJpaRepositoryImplementation implements AgentRepositoryInterface {
 
   private final AgentJpaRepository agentJpaRepository;
 
-  /** Constructor of the class with injected {@link AgentJpaRepository} to use its methods. */
   public AgentJpaRepositoryImplementation(AgentJpaRepository agentJpaRepository) {
     this.agentJpaRepository = agentJpaRepository;
   }
 
   @Override
-  public Agent registerAgent(Agent agent) {
+  public Agent saveAgent(Agent agent) {
     return agentJpaRepository.save(agent);
   }
 
   @Override
-  public Agent findAgentByLicenseNumber(String licenseNumber) {
+  public Optional<Agent> getAgentByUsername(String username) {
+    return agentJpaRepository.findByUsername(username);
+  }
+
+  @Override
+  public Optional<Agent> findAgentByLicenseNumber(String licenseNumber) {
     return agentJpaRepository.findByLicenseNumber(licenseNumber);
   }
 
   @Override
-  public Agent findAgentByUsername(String username) {
-    return agentJpaRepository.findByUsername(username);
+  public Optional<Agent> findAgentById(UUID agentId) {
+    return agentJpaRepository.findById(agentId);
+  }
+
+  @Override
+  public boolean checkAgentIfExistsById(UUID agentId) {
+    return agentJpaRepository.existsById(agentId);
+  }
+
+  @Override
+  public boolean checkAgentIfExistsByUsername(String username) {
+    return agentJpaRepository.existsByUsername(username);
+  }
+
+  @Override
+  public boolean checkAgentIfExistsByLicenseNumber(String licenseNumber) {
+    return agentJpaRepository.existsByLicenseNumber(licenseNumber);
+  }
+
+  @Override
+  public Page<Agent> getPaginatedAgents(Pageable pageable) {
+    return agentJpaRepository.findAll(pageable);
   }
 
   @Override
   public List<Agent> findAllAgents() {
     return agentJpaRepository.findAll();
-  }
-
-  @Override
-  public Agent findAgentById(UUID agentId) {
-    return agentJpaRepository.findByAgentId(agentId);
   }
 }
