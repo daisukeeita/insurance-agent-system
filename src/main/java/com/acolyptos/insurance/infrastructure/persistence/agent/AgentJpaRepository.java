@@ -1,42 +1,45 @@
 package com.acolyptos.insurance.infrastructure.persistence.agent;
 
 import com.acolyptos.insurance.domain.agent.Agent;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Interface that extends the {@link JpaRepository} to access the methods for relational database.
+ * Spring Data JPA Repository for the {@link Agent} entity, providing standard CRUD and custom
+ * lookup methods.
  */
 public interface AgentJpaRepository extends JpaRepository<Agent, UUID> {
 
   /**
-   * Method for saving the details of the agent to the database.
+   * Finds an {@link Agent} entity by its username.
    *
-   * @param agent entity that will be saved to the databse.
-   * @return {@link Agent} details of the agent upon successful database process.
+   * @param username The username of the agent to search for.
+   * @return An {@link Optional} containing the {@link Agent} if found, otherwise empty.
    */
-  Agent save(Agent agent);
+  Optional<Agent> findByUsername(String username);
 
   /**
-   * Method for looking to a specific agent from the database.
+   * Finds an {@link Agent} entity by its license number.
    *
-   * @param username string that will be used to look for that agent.
-   * @return {@link Agent} details of the agent upon successful database process.
+   * @param licenseNumber The license number of the agent to search for.
+   * @return An {@link Optional} containing the {@link Agent} if found, otherwise empty.
    */
-  Agent findByUsername(String username);
+  Optional<Agent> findByLicenseNumber(String licenseNumber);
 
   /**
-   * Method for returning the lists of all registered agents.
+   * Checks if an {@link Agent} entity exists with the given username.
    *
-   * @return {@link Agent} lists details of the agent upon successful process.
+   * @param username The username of the agent to check for existence.
+   * @return 'true' if an agent with given username exists, otherwise 'false'.
    */
-  Agent findByLicenseNumber(String licenseNumber);
+  boolean existsByUsername(String username);
 
   /**
-   * Method for looking to a specific agent from the database.
+   * Checks if an {@link Agent} entity exists with the given license number.
    *
-   * @param agentId string that will be used to look for a specific agent.
-   * @return {@link Agent} details of the agent upon successful database process.
+   * @param licenseNumber The license number of the agent to check for existence.
+   * @return 'true' if an agent with the given license number exists, otherwise 'false'.
    */
-  Agent findByAgentId(UUID agentId);
+  boolean existsByLicenseNumber(String licenseNumber);
 }
