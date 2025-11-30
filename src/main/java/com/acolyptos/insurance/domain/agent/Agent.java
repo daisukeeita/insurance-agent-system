@@ -41,16 +41,9 @@ public class Agent {
   @Column(name = "hashed_password", nullable = false, length = 255)
   private String hashedPassword;
 
-  @NotBlank(message = "Agent's `first name` was not provided.")
-  @Column(name = "first_name", nullable = false, length = 100)
-  private String firstName;
-
-  @Column(name = "middle_initial", nullable = true, length = 10)
-  private String middleInitial;
-
-  @NotBlank(message = "Agent's `last name` was not provided.")
-  @Column(name = "last_name", nullable = false, length = 100)
-  private String lastName;
+  @NotBlank(message = "Agent's full name my be included before saving to the database.")
+  @Column(name = "full_name", nullable = false, length = 150)
+  private String fullName;
 
   @NotBlank(message = "Agent's `license number` was not provided.")
   @Column(name = "license_number", nullable = false, length = 50, unique = true)
@@ -78,55 +71,54 @@ public class Agent {
    *
    * @param username The username credential of the agent, it must be unique.
    */
-  public Agent(String username) {
+  public Agent(
+      Insurer insurer,
+      String username,
+      String hashedPassword,
+      String fullName,
+      String licenseNumber,
+      LocalDate dateHired) {
+    this.insurer = insurer;
     this.username = username;
+    this.hashedPassword = hashedPassword;
+    this.fullName = fullName;
+    this.licenseNumber = licenseNumber;
+    this.dateHired = dateHired;
     this.createdAt = LocalDate.now();
     this.updatedAt = LocalDate.now();
   }
 
-  public void setAgentId(final UUID agentId) {
-    this.agentId = agentId;
-  }
-
-  public void setInsurer(final Insurer insurer) {
-    this.insurer = insurer;
-  }
-
-  public void setUsername(final String username) {
-    this.username = username;
-  }
-
-  public void setHashedPassword(final String hashedPassword) {
-    this.hashedPassword = hashedPassword;
-  }
-
-  public void setFirstName(final String firstName) {
-    this.firstName = firstName;
-  }
-
-  public void setMiddleInitial(final String middleInitial) {
-    this.middleInitial = middleInitial;
-  }
-
-  public void setLastName(final String lastName) {
-    this.lastName = lastName;
-  }
-
-  public void setLicenseNumber(final String licenseNumber) {
-    this.licenseNumber = licenseNumber;
-  }
-
-  public void setCreatedAt(final LocalDate createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public void setUpdatedAt(final LocalDate updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
-  public void setDateHired(final LocalDate dateHired) {
-    this.dateHired = dateHired;
-  }
+  // public void setAgentId(final UUID agentId) {
+  //   this.agentId = agentId;
+  // }
+  //
+  // public void setInsurer(final Insurer insurer) {
+  //   this.insurer = insurer;
+  // }
+  //
+  // public void setUsername(final String username) {
+  //   this.username = username;
+  // }
+  //
+  // public void setHashedPassword(final String hashedPassword) {
+  //   this.hashedPassword = hashedPassword;
+  // }
+  //
+  // public void setFullName(final String fullName) {
+  //   this.fullName = fullName;
+  // }
+  //
+  // public void setLicenseNumber(final String licenseNumber) {
+  //   this.licenseNumber = licenseNumber;
+  // }
+  //
+  // public void setDateHired(final LocalDate dateHired) {
+  //   this.dateHired = dateHired;
+  // }
+  //
+  // public void setUpdatedAt(final LocalDate updatedAt) {
+  //   this.updatedAt = updatedAt;
+  // }
 
   public UUID getAgentId() {
     return agentId;
@@ -144,13 +136,8 @@ public class Agent {
     return hashedPassword;
   }
 
-  /** Method that returns the full name of the Agent, with or without its middle name. */
   public String getFullName() {
-    if (middleInitial.trim().isEmpty() || middleInitial == null) {
-      return firstName + " " + lastName;
-    }
-
-    return firstName + " " + middleInitial + " " + lastName;
+    return fullName;
   }
 
   public String getLicenseNumber() {
