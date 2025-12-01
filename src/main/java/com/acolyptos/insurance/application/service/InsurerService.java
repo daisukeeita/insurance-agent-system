@@ -25,7 +25,8 @@ public class InsurerService {
   /**
    * Constructs an {@code InsurerService} with required repository.
    *
-   * @param insurerRepositoryInterface The repository interface for Insurer persistence operations.
+   * @param insurerRepositoryInterface The repository interface for {@link Insurer} persistence
+   *     operations.
    */
   public InsurerService(InsurerRepositoryInterface insurerRepositoryInterface) {
     this.insurerRepositoryInterface = insurerRepositoryInterface;
