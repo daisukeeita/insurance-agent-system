@@ -23,7 +23,7 @@ public interface AgentRepositoryInterface {
    * @param username The unique username credential of the agent to find.
    * @return An {@link Optional} containing the {@link Agent} if found, otherwise empty.
    */
-  Optional<Agent> getAgentByUsername(String username);
+  Optional<Agent> findAgentByUsername(String username);
 
   /**
    * Finds a single {@link Agent} entity by its license number.
