@@ -98,11 +98,6 @@ public class AgentService {
    */
   public AgentResponseDto retrieveAgentByUsername(final String username) {
 
-    if (username == null || username.trim().isEmpty()) {
-      throw new InvalidRequestBodyException(
-          "Agent's username is required to retrieve the agent from the database.");
-    }
-
     final Agent agent =
         agentRepositoryInterface
             .findAgentByUsername(username)
@@ -125,11 +120,6 @@ public class AgentService {
    * @throws EntityDoesNotExistException if no agent with the given license number is found.
    */
   public AgentResponseDto retrieveAgentByLicenseNumber(final String licenseNumber) {
-
-    if (licenseNumber == null || licenseNumber.trim().isEmpty()) {
-      throw new InvalidRequestBodyException(
-          "Agent's license number is required to retrieve the agent from the databse.");
-    }
 
     final Agent agent =
         agentRepositoryInterface
