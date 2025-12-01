@@ -34,7 +34,7 @@ public class AgentJpaRepositoryImplementation implements AgentRepositoryInterfac
   }
 
   @Override
-  public Optional<Agent> getAgentByUsername(String username) {
+  public Optional<Agent> findAgentByUsername(String username) {
     return agentJpaRepository.findByUsername(username);
   }
 
