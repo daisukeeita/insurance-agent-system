@@ -1,22 +1,26 @@
 package com.acolyptos.insurance.application.service;
 
 import com.acolyptos.insurance.domain.agent.Agent;
-import com.acolyptos.insurance.domain.agent.AgentLoginRequest;
-import com.acolyptos.insurance.domain.agent.AgentRegisterRequest;
+import com.acolyptos.insurance.domain.agent.AgentRegisterRequestDto;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
-import com.acolyptos.insurance.domain.agent.AgentResponse;
+import com.acolyptos.insurance.domain.agent.AgentResponseDto;
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
+import com.acolyptos.insurance.domain.response.PaginationResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-/** Service class for agent entity. */
+/** Service class for managing {@link Agent} entities. */
 @Service
 public class AgentService {
 
@@ -24,144 +28,199 @@ public class AgentService {
   private final InsurerRepositoryInterface insurerRepositoryInterface;
 
   /**
-   * Constructor for Agent Service class.
+   * Constructs an {@code AgentService} with required repositories.
    *
-   * @param agentRepositoryInterface injected interface to have an access to database.
-   * @param insurerRepositoryInterface injected service class for insurer to have an access to
-   *     insurer entity.
+   * @param agentRepositoryInterface The repository interface for {@link Agent} persistence
+   *     operations.
+   * @param insurerRepositoryInterface The repository interface for {@link Insurer} persistence
+   *     operations.
    */
   public AgentService(
-      AgentRepositoryInterface agentRepositoryInterface,
-      InsurerRepositoryInterface insurerRepositoryInterface) {
+      final AgentRepositoryInterface agentRepositoryInterface,
+      final InsurerRepositoryInterface insurerRepositoryInterface) {
     this.agentRepositoryInterface = agentRepositoryInterface;
     this.insurerRepositoryInterface = insurerRepositoryInterface;
   }
 
   /**
-   * Method to process and validate the {@link AgentRegisterRequest} and saves it to the database.
-   * It'll return a filtered detail of the {@link Agent} upon successful process.
+   * Creates a new {@link Agent} in the database based on the provided required DTO.
    *
-   * @param agentRegisterRequest the request body of the client that will be processed and
-   *     validated.
-   * @return a filtered {@link AgentResponse} if the process is successful.
-   * @throws EntityAlreadyExistsException if the agent already exists after checking from the
-   *     database.
-   * @throws EntityDoesNotExistException if the insurer does not exists after checking to the
-   *     database.
+   * <p>It also checks for existing agent by its username and insurer with its provided name before
+   * saving.
+   *
+   * @param agentRegisterRequestDto The DTO containing the required details of the agent to create.
+   * @return The {@link AgentResponseDto} of newly created {@link Agent}, including its generated
+   *     ID.
+   * @throws EntityAlreadyExistsException if an agent with the same username already exists.
+   * @throws EntityDoesNotExistException if an insurer with the provided name does not exists.
    */
-  public AgentResponse createAgent(AgentRegisterRequest agentRegisterRequest) {
-    Agent checkIfExists =
-        agentRepositoryInterface.findAgentByUsername(agentRegisterRequest.getUsername());
-    if (checkIfExists != null) {
+  public AgentResponseDto createAgent(final AgentRegisterRequestDto agentRegisterRequestDto) {
+    if (agentRepositoryInterface.checkAgentIfExistsByUsername(
+        agentRegisterRequestDto.getUsername())) {
       throw new EntityAlreadyExistsException(
-          "This agent is already exists with username" + " '" + checkIfExists.getUsername() + "'.");
+          "Agent's username: '"
+              + agentRegisterRequestDto.getUsername()
+              + "' already used. Please try a different username.");
     }
 
-    Insurer insurer =
+    final Insurer insurer =
         insurerRepositoryInterface
-            .getInsurerByInsurerName(agentRegisterRequest.getInsurer())
+            .getInsurerByInsurerName(agentRegisterRequestDto.getInsurer())
             .orElseThrow(
                 () ->
                     new EntityDoesNotExistException(
-                        "Cannot find an Insurer with the name "
-                            + agentRegisterRequest.getInsurer()));
+                        "Insurer with the name: '"
+                            + agentRegisterRequestDto.getInsurer()
+                            + "' doest not exist in the database. Please make sure it was provided"
+                            + " correctly."));
 
-    String hashedPassword = hashPassword(agentRegisterRequest.getPassword());
-    LocalDate dateHired = formatDate(agentRegisterRequest.getDateHired());
+    // TODO: IMPLEMENT HASH PASSWORD BEFORE SAVING THE AGENT TO THE DATABASE.
+    final Agent agent =
+        new Agent(
+            insurer,
+            agentRegisterRequestDto.getUsername().trim(),
+            agentRegisterRequestDto.getPassword(),
+            agentRegisterRequestDto.getFullName().trim(),
+            agentRegisterRequestDto.getLicenseNumber().trim(),
+            formatDate(agentRegisterRequestDto.getDateHired().trim()));
 
-    Agent agent = new Agent(agentRegisterRequest.getUsername());
-    agent.setHashedPassword(hashedPassword);
-    agent.setInsurer(insurer);
-    agent.setFirstName(agentRegisterRequest.getFirstName());
-    agent.setMiddleInitial(agentRegisterRequest.getMiddleInitial());
-    agent.setLastName(agentRegisterRequest.getLastName());
-    agent.setLicenseNumber(agentRegisterRequest.getLicenseNumber());
-    agent.setDateHired(dateHired);
+    final Agent savedAgent = agentRepositoryInterface.saveAgent(agent);
 
-    return filterAgentDetails(agentRepositoryInterface.registerAgent(agent));
-  }
-
-  /** Method for authenticating the agent. */
-  public Agent loginAgent(AgentLoginRequest agentLoginRequest) {
-    Agent agent = agentRepositoryInterface.findAgentByUsername(agentLoginRequest.getUsername());
-
-    if (agent == null) {
-      throw new EntityDoesNotExistException(
-          "Cannot find an Agent with username: " + "'" + agentLoginRequest.getUsername() + "'.");
-    }
-
-    return agentRepositoryInterface.findAgentByUsername(agentLoginRequest.getUsername());
+    return mapToResponseDto(savedAgent);
   }
 
   /**
-   * Method to look for an Agent using its username.
+   * Retrieves an agent from the database using its username.
    *
-   * @param username the string that will be used to look for the agent.
-   * @return the filtered {@link AgentResponse} if the query is successful.
-   * @throws InvalidRequestBodyException if the username is empty or null.
-   * @throws EntityDoesNotExistException if there's no agent found from the database.
+   * @param username The username of the agent to retrieve.
+   * @return The {@link AgentResponseDto} of the retrieved agent.
+   * @throws EntityDoesNotExistException if no agent with the given username is found.
    */
-  public AgentResponse getAgentByUsernameAndFilter(String username) {
+  public AgentResponseDto retrieveAgentByUsername(final String username) {
 
-    if (username.trim().isEmpty() || username == null) {
-      throw new InvalidRequestBodyException("Agent's username is required.");
+    if (username == null || username.trim().isEmpty()) {
+      throw new InvalidRequestBodyException(
+          "Agent's username is required to retrieve the agent from the database.");
     }
 
-    Agent agent = agentRepositoryInterface.findAgentByUsername(username);
+    final Agent agent =
+        agentRepositoryInterface
+            .findAgentByUsername(username)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Agent with username: '"
+                            + username
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
 
-    if (agent == null) {
-      throw new EntityDoesNotExistException(
-          "Cannot find an Agent with username: " + "'" + username + "'.");
-    }
-
-    return filterAgentDetails(agent);
+    return mapToResponseDto(agent);
   }
 
   /**
-   * Method to look for an Agent using its license number.
+   * Retrieves an agent from the database using its license number.
    *
-   * @param licenseNumber the string that will be used to look for the agent.
-   * @return the filtered {@link AgentResponse} if the query is successful.
-   * @throws InvalidRequestBodyException if the username is empty or null.
-   * @throws EntityDoesNotExistException if there's no agent found from the database.
+   * @param licenseNumber The license number of the agent to retrieve.
+   * @return The {@link AgentResponseDto} of the retrieved agent.
+   * @throws EntityDoesNotExistException if no agent with the given license number is found.
    */
-  public AgentResponse getAgentByLicenseNumberAndFilter(String licenseNumber) {
+  public AgentResponseDto retrieveAgentByLicenseNumber(final String licenseNumber) {
 
-    if (licenseNumber.trim().isEmpty() || licenseNumber == null) {
-      throw new InvalidRequestBodyException("Agent's license number is required.");
+    if (licenseNumber == null || licenseNumber.trim().isEmpty()) {
+      throw new InvalidRequestBodyException(
+          "Agent's license number is required to retrieve the agent from the databse.");
     }
 
-    Agent agent = agentRepositoryInterface.findAgentByLicenseNumber(licenseNumber);
+    final Agent agent =
+        agentRepositoryInterface
+            .findAgentByLicenseNumber(licenseNumber)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Agent with licenseNumber: '"
+                            + licenseNumber
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
 
-    if (agent == null) {
-      throw new EntityDoesNotExistException(
-          "Cannot find an Agent with license number: " + "'" + licenseNumber + "'.");
+    return mapToResponseDto(agent);
+  }
+
+  /**
+   * Retrieves an agent from the database using its unique identification number.
+   *
+   * @param agentId The unique identification number of the agent to retrieve.
+   * @return The {@link AgentResponseDto} of the retrived agent.
+   * @throws EntityDoesNotExistException if no agent with the given identification number is found.
+   */
+  public AgentResponseDto retrieveAgentById(final String agentId) {
+
+    if (agentId == null || agentId.trim().isEmpty()) {
+      throw new InvalidRequestBodyException(
+          "Agent's ID number is required to retrieve the agent from the database.");
     }
 
-    return filterAgentDetails(agent);
+    final UUID id = UUID.fromString(agentId);
+
+    final Agent agent =
+        agentRepositoryInterface
+            .findAgentById(id)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Agent with ID number: '"
+                            + id
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
+
+    return mapToResponseDto(agent);
   }
 
-  public List<Agent> getAllAgents() {
-    return agentRepositoryInterface.findAllAgents();
+  /**
+   * Retrieves a paginated list of all Agents.
+   *
+   * @param pageNumber The zero-based index of the page to retrieve.
+   * @param pageSize The maximum number of agents to include in the page.
+   * @return The {@link PaginationResponse} DTO containing the list of {@link AgentResponseDto} for
+   *     the requested page and pagination metadata.
+   */
+  public PaginationResponse<AgentResponseDto> retrievePaginatedAgents(
+      final int pageNumber, final int pageSize) {
+
+    final List<AgentResponseDto> listAgentResponseDto = new ArrayList<AgentResponseDto>();
+
+    final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    final Page<Agent> paginatedAgents = agentRepositoryInterface.getPaginatedAgents(pageable);
+
+    paginatedAgents
+        .getContent()
+        .forEach(
+            agent -> {
+              final AgentResponseDto agentResponseDto = mapToResponseDto(agent);
+
+              listAgentResponseDto.add(agentResponseDto);
+            });
+
+    return new PaginationResponse<AgentResponseDto>(
+        listAgentResponseDto,
+        paginatedAgents.getPageable().getPageNumber(),
+        paginatedAgents.getPageable().getPageSize(),
+        paginatedAgents.getTotalPages(),
+        paginatedAgents.getTotalElements());
   }
 
-  private AgentResponse filterAgentDetails(Agent agent) {
-    AgentResponse agentResponse = new AgentResponse();
-    agentResponse.setAgentId(agent.getAgentId().toString());
-    agentResponse.setUsername(agent.getUsername());
-    agentResponse.setFullName(agent.getFullName());
-    agentResponse.setLicenseNumber(agent.getLicenseNumber());
-    agentResponse.setInsurerName(agent.getInsurer().getInsurerName());
+  private AgentResponseDto mapToResponseDto(final Agent agent) {
+    final AgentResponseDto agentResponseDto = new AgentResponseDto();
+    agentResponseDto.setAgentId(agent.getAgentId().toString());
+    agentResponseDto.setUsername(agent.getUsername());
+    agentResponseDto.setFullName(agent.getFullName());
+    agentResponseDto.setLicenseNumber(agent.getLicenseNumber());
+    agentResponseDto.setInsurerName(agent.getInsurer().getInsurerName());
 
-    return agentResponse;
+    return agentResponseDto;
   }
 
-  private String hashPassword(String password) {
-    return UUID.randomUUID().toString();
-  }
-
-  private LocalDate formatDate(String dateHired) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private LocalDate formatDate(final String dateHired) {
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     return LocalDate.parse(dateHired, formatter);
   }
