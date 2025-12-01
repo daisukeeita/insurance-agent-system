@@ -1,11 +1,10 @@
 package com.acolyptos.insurance.domain.agent;
 
-
 /**
  * Class that will be used to filter the details of the Agent entity before sending the Success
  * Response.
  */
-public class AgentResponse {
+public class AgentResponseDto {
 
   private String agentId;
 
@@ -18,7 +17,7 @@ public class AgentResponse {
   private String insurerName;
 
   /** The default constructor for this class. */
-  public AgentResponse() {}
+  public AgentResponseDto() {}
 
   public void setAgentId(String agentId) {
     this.agentId = agentId;
