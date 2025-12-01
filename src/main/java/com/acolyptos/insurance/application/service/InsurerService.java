@@ -160,7 +160,7 @@ public class InsurerService {
               listInsurerResponseDto.add(insurerResponseDto);
             });
 
-    return new PaginationResponse<>(
+    return new PaginationResponse<InsurerResponseDto>(
         listInsurerResponseDto,
         paginatedInsurer.getPageable().getPageNumber(),
         paginatedInsurer.getPageable().getPageSize(),
