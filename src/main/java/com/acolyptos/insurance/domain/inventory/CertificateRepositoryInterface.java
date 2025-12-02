@@ -31,7 +31,7 @@ public interface CertificateRepositoryInterface {
    * @param cocNumber The unique identification of the Certificate of Coverage to find.
    * @return An {@link Optional} containing the Certificate of Coverage if found, otherwise empty.
    */
-  Optional<CertificateOfCoverage> getCertificateOfCoverageByNumber(String cocNumber);
+  Optional<CertificateOfCoverage> getCertificateOfCoverageById(String cocNumber);
 
   /**
    * Checks if an {@link CertificateOfCoverage} entity with the given certificate number exists in
@@ -40,7 +40,7 @@ public interface CertificateRepositoryInterface {
    * @param cocNumber The unique identification of the certificate to check for existence.
    * @return 'true' if a certificate exists with the given identification number, otherwise 'false'.
    */
-  boolean checkCertificateIfExistsByNumber(String cocNumber);
+  boolean checkCertificateIfExistsById(String cocNumber);
 
   /**
    * Retrieves a paginated list of all {@link CertificateOfCoverage} entities.
