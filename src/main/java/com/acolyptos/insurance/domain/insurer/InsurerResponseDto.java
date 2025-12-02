@@ -3,8 +3,9 @@ package com.acolyptos.insurance.domain.insurer;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Response DTO class for Insurer entity. This DTO is typically used to carry the necessary
- * information that will be sent to the client.
+ * Response DTO class for Insurer entity.
+ *
+ * <p>This DTO is typically used to carry the necessary information that will be sent to the client.
  */
 public class InsurerResponseDto {
 
@@ -17,7 +18,7 @@ public class InsurerResponseDto {
   @NotBlank(message = "Insurer Address must be included to the Insurer Response DTO.")
   private String insurerAddress;
 
-  /** Constructor for creating a new InsurerResponseDto. */
+  /** Constructs a new {@code InsurerResponseDto} */
   public InsurerResponseDto() {}
 
   public void setInsurerId(final String insurerId) {
