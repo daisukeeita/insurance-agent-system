@@ -52,7 +52,7 @@ public interface InsurerRepositoryInterface {
   /**
    * Retrieves a paginated list of all {@link Insurer} entities.
    *
-   * @param pageable The pagination information of (number, size, sort).
+   * @param pageable The pagination information of Insurer (number, size, sort).
    * @return A {@link Page} of {@link Insurer} entities.
    */
   Page<Insurer> getPaginatedInsurers(Pageable pageable);
