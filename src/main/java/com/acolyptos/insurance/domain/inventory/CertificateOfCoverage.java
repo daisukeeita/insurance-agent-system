@@ -51,40 +51,59 @@ public class CertificateOfCoverage {
 
   @OneToOne
   @Null
-  @JoinColumn(name = "policy_id", referencedColumnName = "policy_id")
+  @JoinColumn(name = "policy_id", referencedColumnName = "policy_id", nullable = true)
   private Policy policy;
 
-  /** Protecting the default class constructor. */
+  /**
+   * Default constructor required by the JPA/Hibernate. Protected to prevent direct instantiation.
+   */
   protected CertificateOfCoverage() {}
 
-  /** Constructor to be used for the class. */
-  public CertificateOfCoverage(String cocNumber) {
+  /**
+   * Constructs a new {@code CertificateOfCoverage} entity with with required data.
+   *
+   * @param cocNumber The unique identification of the certificate of coverage, it must be unique.
+   * @param procuredBy The agent requesting/procuring the certificate of coverage.
+   * @param batchReference The reference number of procured certificate of coverage.
+   * @param dateIssued The date issued of the certificate of coverage.
+   * @param status The status of the certificate of coverage.
+   */
+  public CertificateOfCoverage(
+      String cocNumber,
+      Agent procuredBy,
+      String batchReference,
+      LocalDate dateIssued,
+      Status status) {
     this.cocNumber = cocNumber;
-  }
-
-  public void setCocNumber(String cocNumber) {
-    this.cocNumber = cocNumber;
-  }
-
-  public void setProcuredBy(Agent procuredBy) {
     this.procuredBy = procuredBy;
-  }
-
-  public void setBatchReference(String batchReference) {
     this.batchReference = batchReference;
-  }
-
-  public void setDateIssued(LocalDate dateIssued) {
     this.dateIssued = dateIssued;
-  }
-
-  public void setStatus(Status status) {
     this.status = status;
   }
 
-  public void setPolicy(Policy policy) {
-    this.policy = policy;
-  }
+  // public void setCocNumber(String cocNumber) {
+  //   this.cocNumber = cocNumber;
+  // }
+  //
+  // public void setProcuredBy(Agent procuredBy) {
+  //   this.procuredBy = procuredBy;
+  // }
+  //
+  // public void setBatchReference(String batchReference) {
+  //   this.batchReference = batchReference;
+  // }
+  //
+  // public void setDateIssued(LocalDate dateIssued) {
+  //   this.dateIssued = dateIssued;
+  // }
+  //
+  // public void setStatus(Status status) {
+  //   this.status = status;
+  // }
+  //
+  // public void setPolicy(Policy policy) {
+  //   this.policy = policy;
+  // }
 
   public String getCocNumber() {
     return cocNumber;
