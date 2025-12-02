@@ -16,7 +16,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import java.time.LocalDate;
 
-/** An Entity that represents the details of the Certificate of Coverage. */
+/**
+ * Represents the Certificate of Coverage entity stored in the "coc_inventory" database table. This
+ * entity holds the core details aboout the coverage of the vehicle insurance.
+ */
 @Entity
 @Table(name = "coc_inventory")
 public class CertificateOfCoverage {
