@@ -34,6 +34,15 @@ public interface CertificateRepositoryInterface {
   Optional<CertificateOfCoverage> getCertificateOfCoverageByNumber(String cocNumber);
 
   /**
+   * Checks if an {@link CertificateOfCoverage} entity with the given certificate number exists in
+   * the database.
+   *
+   * @param cocNumber The unique identification of the certificate to check for existence.
+   * @return 'true' if a certificate exists with the given identification number, otherwise 'false'.
+   */
+  boolean checkCertificateIfExistsByNumber(String cocNumber);
+
+  /**
    * Retrieves a paginated list of all {@link CertificateOfCoverage} entities.
    *
    * @param pageable The pagination information of the certificate (number, size, sort).
