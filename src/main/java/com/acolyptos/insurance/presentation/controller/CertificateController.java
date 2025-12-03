@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.presentation.controller;
 
 import com.acolyptos.insurance.application.service.CertificateService;
+import com.acolyptos.insurance.domain.certificate.CertificateOfCoverage;
 import com.acolyptos.insurance.domain.certificate.CertificateRequestDto;
 import com.acolyptos.insurance.domain.certificate.CertificateResponseDto;
 import com.acolyptos.insurance.domain.response.PaginationResponse;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +49,7 @@ public class CertificateController {
    * service layer for persistence.
    *
    * @param certificateRequestDto The DTO containing the details of the certificate to be created.
-   *     It is bound from the request body usint {@code @RequestBody} and validated using
+   *     It is bound from the request body using {@code @RequestBody} and validated using
    *     {@code @valid}.
    * @return A {@link SuccessResponse} containing the created {@link CertificateResponseDto} and a
    *     HTTP status of {@link HttpStatus#CREATED} (201).
@@ -95,6 +97,42 @@ public class CertificateController {
         HttpStatus.CREATED,
         "List of certificates created successfully.",
         listCertificateResponseDto);
+  }
+
+  /**
+   * Updates the status of a specific {@link CertificateOfCoverage} entity based on it COC Number.
+   *
+   * @param cocNumber The COC Number or unique identification number to update. This value is
+   *     extracted from the URL path using {@code @PathVariable}.
+   * @param status The new status to update in existing certificate entity.It is bound from the
+   *     request body using {@code @RequestBody} and validated using {@code @Validated} and
+   *     {@code @NotBlank}.
+   * @return A {@link SuccessResponse} containing the updated {@link CertificateResponseDto} and a
+   *     HTTP status of {@link HttpStatus#OK} (200).
+   * @throws RuntimeException Various exceptions handled globally, typically returning an {@code
+   *     ErrorResponse} JSON body.
+   */
+  @PutMapping("updateCertificateById/{cocNumber}")
+  @ResponseStatus(HttpStatus.OK)
+  public SuccessResponse<CertificateResponseDto> retrieveAndUpdateCertificateStatus(
+      @PathVariable
+          @NotBlank(
+              message =
+                  "Certificate's COC Number is required to update the certificate from the"
+                      + " database.")
+          final String cocNumber,
+      @RequestBody
+          @NotBlank(message = "Certificate's status is required to update its current status.")
+          final String status) {
+
+    final CertificateResponseDto certificateResponseDto =
+        certificateService.retrieveAndUpdateCertificateStatus(cocNumber, status);
+
+    return new SuccessResponse<CertificateResponseDto>(
+        HttpStatus.OK.value(),
+        HttpStatus.OK,
+        "Certificate successfully updated.",
+        certificateResponseDto);
   }
 
   /**
