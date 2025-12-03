@@ -37,8 +37,8 @@ public class CertificateService {
    *     operations.
    */
   public CertificateService(
-      CertificateRepositoryInterface certificateRepositoryInterface,
-      AgentRepositoryInterface agentRepositoryInterface) {
+      final CertificateRepositoryInterface certificateRepositoryInterface,
+      final AgentRepositoryInterface agentRepositoryInterface) {
 
     this.certificateRepositoryInterface = certificateRepositoryInterface;
     this.agentRepositoryInterface = agentRepositoryInterface;
@@ -59,7 +59,7 @@ public class CertificateService {
    *     not exists in the database.
    */
   public CertificateResponseDto createAndSaveCertificate(
-      CertificateRequestDto certificateRequestDto) {
+      final CertificateRequestDto certificateRequestDto) {
 
     final UUID id = UUID.fromString(certificateRequestDto.getAgentId());
 
@@ -71,7 +71,7 @@ public class CertificateService {
               + "' already exists. Please check the inventory and COC number.");
     }
 
-    Agent agent =
+    final Agent agent =
         agentRepositoryInterface
             .findAgentById(id)
             .orElseThrow(
@@ -82,7 +82,7 @@ public class CertificateService {
                             + "' does not exist in the database. Please make sure it was provided"
                             + " correctly."));
 
-    CertificateOfCoverage certificateOfCoverage =
+    final CertificateOfCoverage certificateOfCoverage =
         new CertificateOfCoverage(
             certificateRequestDto.getCocNumber(),
             agent,
@@ -90,7 +90,7 @@ public class CertificateService {
             formatDate(certificateRequestDto.getDateIssued()),
             CertificateStatus.AVAILABLE);
 
-    CertificateOfCoverage savedCertificate =
+    final CertificateOfCoverage savedCertificate =
         certificateRepositoryInterface.saveCertificateOfCoverage(certificateOfCoverage);
 
     return mapToDto(savedCertificate);
@@ -113,16 +113,17 @@ public class CertificateService {
    *     not exists in the database.
    */
   public List<CertificateResponseDto> createAndSaveAllCertificate(
-      List<CertificateRequestDto> listCertificateRequestDto) {
+      final List<CertificateRequestDto> listCertificateRequestDto) {
 
-    List<CertificateOfCoverage> listCertificateOfCoverage = new ArrayList<CertificateOfCoverage>();
-    List<CertificateResponseDto> listCertificateResponseDto =
+    final List<CertificateOfCoverage> listCertificateOfCoverage =
+        new ArrayList<CertificateOfCoverage>();
+    final List<CertificateResponseDto> listCertificateResponseDto =
         new ArrayList<CertificateResponseDto>();
 
     listCertificateRequestDto.forEach(
         request -> {
           final UUID id = UUID.fromString(request.getAgentId());
-          String cocNumber = request.getCocNumber();
+          final String cocNumber = request.getCocNumber();
 
           if (certificateRepositoryInterface.checkCertificateIfExistsById(cocNumber)) {
             throw new EntityAlreadyExistsException(
@@ -131,7 +132,7 @@ public class CertificateService {
                     + "' already exists. Please check the inventory and COC number.");
           }
 
-          Agent agent =
+          final Agent agent =
               agentRepositoryInterface
                   .findAgentById(id)
                   .orElseThrow(
@@ -151,7 +152,7 @@ public class CertificateService {
                   CertificateStatus.AVAILABLE));
         });
 
-    List<CertificateOfCoverage> listSavedCertificates =
+    final List<CertificateOfCoverage> listSavedCertificates =
         certificateRepositoryInterface.saveAllCertificateOfCoverage(listCertificateOfCoverage);
 
     listSavedCertificates.forEach(
@@ -176,9 +177,9 @@ public class CertificateService {
    *     does not exists in the database.
    */
   public CertificateResponseDto retrieveAndUpdateCertificateStatus(
-      String cocNumber, String status) {
+      final String cocNumber, final String status) {
 
-    CertificateStatus certificateStatus =
+    final CertificateStatus certificateStatus =
         CertificateStatus.fromString(status)
             .orElseThrow(
                 () ->
@@ -188,7 +189,7 @@ public class CertificateService {
                             + "' is invalid. Valid status are: "
                             + CertificateStatus.values()));
 
-    CertificateOfCoverage certificateOfCoverage =
+    final CertificateOfCoverage certificateOfCoverage =
         certificateRepositoryInterface
             .getCertificateOfCoverageById(cocNumber)
             .orElseThrow(
@@ -201,7 +202,7 @@ public class CertificateService {
 
     certificateOfCoverage.setStatus(certificateStatus);
 
-    CertificateOfCoverage updatedCertificate =
+    final CertificateOfCoverage updatedCertificate =
         certificateRepositoryInterface.saveCertificateOfCoverage(certificateOfCoverage);
 
     return mapToDto(updatedCertificate);
@@ -215,9 +216,9 @@ public class CertificateService {
    * @return The {@link CertificateResponseDto} of the retrieved certificate.
    * @throws EntityDoesNotExistException if no certificate with the given COC Number is found.
    */
-  public CertificateResponseDto retrieveCertificateOfCoverageById(String cocNumber) {
+  public CertificateResponseDto retrieveCertificateOfCoverageById(final String cocNumber) {
 
-    CertificateOfCoverage certificateOfCoverage =
+    final CertificateOfCoverage certificateOfCoverage =
         certificateRepositoryInterface
             .getCertificateOfCoverageById(cocNumber)
             .orElseThrow(
@@ -240,13 +241,13 @@ public class CertificateService {
    *     CertificateResponseDto} for the requested page and pagination metadata.
    */
   public PaginationResponse<CertificateResponseDto> retrievePaginatedCertificates(
-      int pageNumber, int pageSize) {
+      final int pageNumber, final int pageSize) {
 
-    List<CertificateResponseDto> listCertificateResponseDto =
+    final List<CertificateResponseDto> listCertificateResponseDto =
         new ArrayList<CertificateResponseDto>();
 
-    Pageable pageable = PageRequest.of(pageNumber, pageSize);
-    Page<CertificateOfCoverage> paginatedCertificate =
+    final Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    final Page<CertificateOfCoverage> paginatedCertificate =
         certificateRepositoryInterface.getPaginatedCertificateOfCoverage(pageable);
 
     paginatedCertificate.forEach(
@@ -262,8 +263,8 @@ public class CertificateService {
         paginatedCertificate.getTotalElements());
   }
 
-  private CertificateResponseDto mapToDto(CertificateOfCoverage certificateOfCoverage) {
-    CertificateResponseDto certificateResponseDto = new CertificateResponseDto();
+  private CertificateResponseDto mapToDto(final CertificateOfCoverage certificateOfCoverage) {
+    final CertificateResponseDto certificateResponseDto = new CertificateResponseDto();
     certificateResponseDto.setCocNumber(certificateOfCoverage.getCocNumber());
     certificateResponseDto.setProcuredBy(certificateOfCoverage.getProcuredBy().getFullName());
     certificateResponseDto.setBatchReference(certificateOfCoverage.getBatchReference());
