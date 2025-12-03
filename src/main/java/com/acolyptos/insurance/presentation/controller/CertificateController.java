@@ -36,16 +36,30 @@ public class CertificateController {
    * @param certificateService The service class implementing the business logic for Certificate of
    *     Coverage operations.
    */
-  public CertificateController(CertificateService certificateService) {
+  public CertificateController(final CertificateService certificateService) {
     this.certificateService = certificateService;
   }
 
+  /**
+   * Creates a new Certificate of Coverage record.
+   *
+   * <p>Accepts a {@link CertificateRequestDto} from the client, validates it, and send it to the
+   * service layer for persistence.
+   *
+   * @param certificateRequestDto The DTO containing the details of the certificate to be created.
+   *     It is bound from the request body usint {@code @RequestBody} and validated using
+   *     {@code @valid}.
+   * @return A {@link SuccessResponse} containing the created {@link CertificateResponseDto} and a
+   *     HTTP status of {@link HttpStatus#CREATED} (201).
+   * @throws RuntimeException Various exceptions handled globally, typically returning an {@code
+   *     ErrorResponse} JSON body.
+   */
   @PostMapping("/addCertificateOfCoverage")
   @ResponseStatus(HttpStatus.CREATED)
   public SuccessResponse<CertificateResponseDto> createAndSaveCertificateOfCoverage(
-      @RequestBody @Valid CertificateRequestDto certificateRequestDto) {
+      @RequestBody @Valid final CertificateRequestDto certificateRequestDto) {
 
-    CertificateResponseDto certificateOfCoverage =
+    final CertificateResponseDto certificateOfCoverage =
         certificateService.createAndSaveCertificate(certificateRequestDto);
 
     return new SuccessResponse<CertificateResponseDto>(
@@ -55,12 +69,25 @@ public class CertificateController {
         certificateOfCoverage);
   }
 
+  /**
+   * Creates a list of new Certificate of Coverage record.
+   *
+   * <p>Accepts a list of {@link CertificateRequestDto} from the client, validates it, and send it
+   * to the service layer for persistence.
+   *
+   * @param listCertificateRequestDto The {@link List} containing {@link CertificateRequestDto} to
+   *     be created.
+   * @return A {@link SuccessResponse} containing the list of created {@link CertificateResponseDto}
+   *     and a HTTP status of {@link HttpStatus#CREATED} (201).
+   * @throws RuntimeException Various exceptions handled globally, typically returning an {@code
+   *     ErrorResponse} JSON body.
+   */
   @PostMapping("/addListCertificateOfCoverage")
   @ResponseStatus(HttpStatus.CREATED)
   public SuccessResponse<List<CertificateResponseDto>> createAndSaveListCertificateOfCoverage(
-      @RequestBody @Valid List<CertificateRequestDto> listCertificateRequestDto) {
+      @RequestBody @Valid final List<CertificateRequestDto> listCertificateRequestDto) {
 
-    List<CertificateResponseDto> listCertificateResponseDto =
+    final List<CertificateResponseDto> listCertificateResponseDto =
         certificateService.createAndSaveAllCertificate(listCertificateRequestDto);
 
     return new SuccessResponse<List<CertificateResponseDto>>(
@@ -70,6 +97,16 @@ public class CertificateController {
         listCertificateResponseDto);
   }
 
+  /**
+   * Retrieves a specific {@link CertificateOfCoverage} entity based on its COC Number.
+   *
+   * @param cocNumber The COC Number or unique identification number of the certificate to retrieve.
+   *     This value is extracted from the URL path using {@code @PathVariable}.
+   * @return A {@link SuccessResponse} containing the found {@link CertificateResponseDto} and a
+   *     HTTP status of {@link HttpStatus#FOUND} (302).
+   * @throws RuntimeException Various exception handled globally, typically returning an {@code
+   *     ErrorResponse} JSON body.
+   */
   @GetMapping("/getCertificateById/{cocNumber}")
   @ResponseStatus(HttpStatus.FOUND)
   public SuccessResponse<CertificateResponseDto> findAndRetrieveCertificateById(
@@ -80,7 +117,7 @@ public class CertificateController {
                       + " database.")
           final String cocNumber) {
 
-    CertificateResponseDto certificateResponseDto =
+    final CertificateResponseDto certificateResponseDto =
         certificateService.retrieveCertificateOfCoverageById(cocNumber);
 
     return new SuccessResponse<CertificateResponseDto>(
@@ -90,12 +127,23 @@ public class CertificateController {
         certificateResponseDto);
   }
 
+  /**
+   * Retrieves a paginated list of all Certificates.
+   *
+   * @param pageNumber The zero-based index of the page to retrieve. Extracted from URL query
+   *     parameters using {@code @RequestParam}.
+   * @param pageSize The maximum number of certificates to include in the page. Extracted from URL
+   *     query parameters using {@code @RequestParam}.
+   * @return A {@link SuccessResponse} containing the found {@link CertificateResponseDto} and a
+   *     HTTP status of {@link HttpStatus#FOUND} (302).
+   * @throws RuntimeException Various exceptions handled globally.
+   */
   @GetMapping("/getPaginatedCertificates")
   @ResponseStatus(HttpStatus.FOUND)
   public SuccessResponse<PaginationResponse<CertificateResponseDto>> retrievePaginatedCertificates(
       @RequestParam(defaultValue = "0") final int pageNumber,
       @RequestParam(defaultValue = "10") final int pageSize) {
-    PaginationResponse<CertificateResponseDto> paginatedCertificates =
+    final PaginationResponse<CertificateResponseDto> paginatedCertificates =
         certificateService.retrievePaginatedCertificates(pageNumber, pageSize);
 
     return new SuccessResponse<PaginationResponse<CertificateResponseDto>>(
