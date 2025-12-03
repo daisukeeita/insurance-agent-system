@@ -84,29 +84,29 @@ public class CertificateOfCoverage {
     this.status = status;
   }
 
-  // public void setCocNumber(String cocNumber) {
-  //   this.cocNumber = cocNumber;
-  // }
-  //
-  // public void setProcuredBy(Agent procuredBy) {
-  //   this.procuredBy = procuredBy;
-  // }
-  //
-  // public void setBatchReference(String batchReference) {
-  //   this.batchReference = batchReference;
-  // }
-  //
-  // public void setDateIssued(LocalDate dateIssued) {
-  //   this.dateIssued = dateIssued;
-  // }
-  //
-  // public void setStatus(Status status) {
-  //   this.status = status;
-  // }
-  //
-  // public void setPolicy(Policy policy) {
-  //   this.policy = policy;
-  // }
+  public void setCocNumber(String cocNumber) {
+    this.cocNumber = cocNumber;
+  }
+
+  public void setProcuredBy(Agent procuredBy) {
+    this.procuredBy = procuredBy;
+  }
+
+  public void setBatchReference(String batchReference) {
+    this.batchReference = batchReference;
+  }
+
+  public void setDateIssued(LocalDate dateIssued) {
+    this.dateIssued = dateIssued;
+  }
+
+  public void setStatus(CertificateStatus status) {
+    this.status = status;
+  }
+
+  public void setPolicy(Policy policy) {
+    this.policy = policy;
+  }
 
   public String getCocNumber() {
     return cocNumber;
