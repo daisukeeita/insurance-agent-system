@@ -9,6 +9,7 @@ import com.acolyptos.insurance.domain.certificate.CertificateResponseDto;
 import com.acolyptos.insurance.domain.certificate.CertificateStatus;
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
+import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.response.PaginationResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -159,6 +160,51 @@ public class CertificateService {
         });
 
     return listCertificateResponseDto;
+  }
+
+  /**
+   * Updates an existing certificate entity based on the provided DTO.
+   *
+   * @param cocNumber The COC Number or its unique identification number of the certificate to
+   *     update.
+   * @param status The new status to update in existing certificate entity.
+   * @return The {@link CertificateResponseDto} of newly updated {@link CertificateOfCoverage},
+   *     including its COC Number.
+   * @throws InvalidRequestBodyException if the given string is not matched to the values of {@link
+   *     CertificateStatus}.
+   * @throws EntityDoesNotExistException if a certificate with the provided unique identification
+   *     does not exists in the database.
+   */
+  public CertificateResponseDto retrieveAndUpdateCertificateStatus(
+      String cocNumber, String status) {
+
+    CertificateStatus certificateStatus =
+        CertificateStatus.fromString(status)
+            .orElseThrow(
+                () ->
+                    new InvalidRequestBodyException(
+                        "The given status: '"
+                            + status
+                            + "' is invalid. Valid status are: "
+                            + CertificateStatus.values()));
+
+    CertificateOfCoverage certificateOfCoverage =
+        certificateRepositoryInterface
+            .getCertificateOfCoverageById(cocNumber)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Certificate of Coverage with ID: '"
+                            + cocNumber
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
+
+    certificateOfCoverage.setStatus(certificateStatus);
+
+    CertificateOfCoverage updatedCertificate =
+        certificateRepositoryInterface.saveCertificateOfCoverage(certificateOfCoverage);
+
+    return mapToDto(updatedCertificate);
   }
 
   /**
