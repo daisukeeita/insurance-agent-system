@@ -102,7 +102,7 @@ public class CertificateService {
    * <p>It also checks for an existing certificate with the same COC Number and agent with its
    * unique identification number per element of the list before saving.
    *
-   * @param listCertificateRequestDtos The list of DTOs containing the details of the certificate,
+   * @param listCertificateRequestDto The list of DTOs containing the details of the certificate,
    *     per element, to create.
    * @return A {@link List} containing the {@link CertificateResponseDto} of newly created {@link
    *     CertificateOfCoverage}, including its COC Number per element.
@@ -112,13 +112,13 @@ public class CertificateService {
    *     not exists in the database.
    */
   public List<CertificateResponseDto> createAndSaveAllCertificate(
-      List<CertificateRequestDto> listCertificateRequestDtos) {
+      List<CertificateRequestDto> listCertificateRequestDto) {
 
     List<CertificateOfCoverage> listCertificateOfCoverage = new ArrayList<CertificateOfCoverage>();
     List<CertificateResponseDto> listCertificateResponseDto =
         new ArrayList<CertificateResponseDto>();
 
-    listCertificateRequestDtos.forEach(
+    listCertificateRequestDto.forEach(
         request -> {
           final UUID id = UUID.fromString(request.getAgentId());
           String cocNumber = request.getCocNumber();
