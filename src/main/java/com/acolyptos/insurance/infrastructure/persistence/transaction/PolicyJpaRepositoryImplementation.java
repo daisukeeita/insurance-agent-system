@@ -37,11 +37,6 @@ public class PolicyJpaRepositoryImplementation implements PolicyRepositoryInterf
   }
 
   @Override
-  public Optional<Policy> findPolicyByCocNumber(final String cocNumber) {
-    return policyJpaRepository.findByCocNumber(cocNumber);
-  }
-
-  @Override
   public boolean checkPolicyIfExistsById(final String policyId) {
     return policyJpaRepository.existsById(policyId);
   }
