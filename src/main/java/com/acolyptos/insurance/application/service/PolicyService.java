@@ -2,8 +2,9 @@ package com.acolyptos.insurance.application.service;
 
 import com.acolyptos.insurance.domain.agent.Agent;
 import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
-import com.acolyptos.insurance.domain.inventory.CertificateOfCoverage;
-import com.acolyptos.insurance.domain.inventory.CocRepositoryInterface;
+import com.acolyptos.insurance.domain.certificate.CertificateOfCoverage;
+import com.acolyptos.insurance.domain.certificate.CertificateRepositoryInterface;
+import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
 import com.acolyptos.insurance.domain.transaction.Policy;
 import com.acolyptos.insurance.domain.transaction.PolicyRepositoryInterface;
 import com.acolyptos.insurance.domain.transaction.PolicyRequestDto;
@@ -17,24 +18,44 @@ import org.springframework.stereotype.Service;
 public class PolicyService {
 
   private final PolicyRepositoryInterface policyRepositoryInterface;
-  private final CocRepositoryInterface cocRepositoryInterface;
+  private final CertificateRepositoryInterface certificateRepositoryInterface;
   private final AgentRepositoryInterface agentRepositoryInterface;
 
   public PolicyService(
-      CocRepositoryInterface cocRepositoryInterface,
+      CertificateRepositoryInterface certificateRepositoryInterface,
       AgentRepositoryInterface agentRepositoryInterface,
       PolicyRepositoryInterface policyRepositoryInterface) {
-    this.cocRepositoryInterface = cocRepositoryInterface;
+    this.certificateRepositoryInterface = certificateRepositoryInterface;
     this.agentRepositoryInterface = agentRepositoryInterface;
     this.policyRepositoryInterface = policyRepositoryInterface;
   }
 
   public PolicyResponseDto processAndSavePolicy(PolicyRequestDto policyRequestDto) {
 
-    CertificateOfCoverage certificateOfCoverage =
-        cocRepositoryInterface.getCertificateOfCoverageByNumber(policyRequestDto.getCocNumber());
+    String cocNumber = policyRequestDto.getCocNumber();
+    String agentUsername = policyRequestDto.getAgentUsername();
 
-    Agent agent = agentRepositoryInterface.findAgentByUsername(policyRequestDto.getAgentUsername());
+    CertificateOfCoverage certificateOfCoverage =
+        certificateRepositoryInterface
+            .getCertificateOfCoverageById(cocNumber)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Certificate with COC Number: '"
+                            + cocNumber
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
+
+    Agent agent =
+        agentRepositoryInterface
+            .findAgentByUsername(agentUsername)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Agent with the username: '"
+                            + agentUsername
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -52,15 +73,23 @@ public class PolicyService {
 
     Policy savedPolicy = policyRepositoryInterface.savePolicy(policy);
 
-    return new PolicyResponseDto(
-        savedPolicy.getPolicyId(),
-        savedPolicy.getCertificateOfCoverage().getCocNumber(),
-        savedPolicy.getAgent().getFullName(),
-        savedPolicy.getCustomerName(),
-        savedPolicy.getPlateNumber(),
-        savedPolicy.getChassisNumber(),
-        savedPolicy.getPremiumAmount().toString(),
-        savedPolicy.getConvertedSaleTimestamp(),
-        savedPolicy.getInsurerBindingTransactionReference());
+    return mapToDto(savedPolicy);
+  }
+
+  private PolicyResponseDto mapToDto(Policy policy) {
+
+    PolicyResponseDto policyResponseDto = new PolicyResponseDto();
+    policyResponseDto.setPolicyId(policy.getPolicyId());
+    policyResponseDto.setCocNumber(policy.getCertificateOfCoverage().getCocNumber());
+    policyResponseDto.setAgentName(policy.getAgent().getFullName());
+    policyResponseDto.setCustomerName(policy.getCustomerName());
+    policyResponseDto.setPlateNumber(policy.getPlateNumber());
+    policyResponseDto.setChassisNumber(policy.getChassisNumber());
+    policyResponseDto.setPremiumAmount(policy.getPremiumAmount().toString());
+    policyResponseDto.setSaleTimestamp(policy.getConvertedSaleTimestamp());
+    policyResponseDto.setInsurerBindingTransactionReference(
+        policy.getInsurerBindingTransactionReference());
+
+    return policyResponseDto;
   }
 }
