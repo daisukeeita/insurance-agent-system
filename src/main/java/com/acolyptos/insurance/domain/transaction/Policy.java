@@ -1,7 +1,7 @@
 package com.acolyptos.insurance.domain.transaction;
 
 import com.acolyptos.insurance.domain.agent.Agent;
-import com.acolyptos.insurance.domain.inventory.CertificateOfCoverage;
+import com.acolyptos.insurance.domain.certificate.CertificateOfCoverage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,6 +14,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a Policy stored in "policies" database table. This entity holds the core details about
+ * the Agent's transaction receipt.
+ */
 @Entity
 @Table(name = "policies")
 public class Policy {
@@ -63,10 +67,25 @@ public class Policy {
   @NotBlank(message = "Insurer's Transaction Reference was not provided under Policy Entity.")
   private String insurerBindingTransactionReference;
 
-  /** Protecting the Policy Entity default Class Constructor. */
+  /**
+   * Default constructor required by the JPA/Hibernate. Protected to prevent direct instantiation.
+   */
   protected Policy() {}
 
-  /** Class constructor of Policy Entity. */
+  /**
+   * Constructs a new Policy entity with required data.
+   *
+   * @param policyId The policy ID or its unique identification number of the policy.
+   * @param certificateOfCoverage The coverage that will be used for this policy.
+   * @param agent The agent processing the policy.
+   * @param customerName The name of the customer to bind in the certificate.
+   * @param plateNumber The plate number of the customer to bind in the certificate.
+   * @param chassisNumber The chassis number of the customer to bind in the certificate.
+   * @param premiumAmount The price of the policy.
+   * @param saleTimestamp The date and timestamp of the processed policy.
+   * @param insurerBindingTransactionReference The binding transaction reference number of the
+   *     certificate and customoer, processed by the Insurer.
+   */
   public Policy(
       String policyId,
       CertificateOfCoverage certificateOfCoverage,
