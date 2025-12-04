@@ -5,6 +5,7 @@ import com.acolyptos.insurance.domain.agent.AgentRepositoryInterface;
 import com.acolyptos.insurance.domain.certificate.CertificateOfCoverage;
 import com.acolyptos.insurance.domain.certificate.CertificateRepositoryInterface;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
+import com.acolyptos.insurance.domain.response.PaginationResponse;
 import com.acolyptos.insurance.domain.transaction.Policy;
 import com.acolyptos.insurance.domain.transaction.PolicyRepositoryInterface;
 import com.acolyptos.insurance.domain.transaction.PolicyRequestDto;
@@ -12,6 +13,11 @@ import com.acolyptos.insurance.domain.transaction.PolicyResponseDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +36,7 @@ public class PolicyService {
     this.policyRepositoryInterface = policyRepositoryInterface;
   }
 
-  public PolicyResponseDto processAndSavePolicy(PolicyRequestDto policyRequestDto) {
+  public PolicyResponseDto createPolicy(PolicyRequestDto policyRequestDto) {
 
     String cocNumber = policyRequestDto.getCocNumber();
     String agentUsername = policyRequestDto.getAgentUsername();
@@ -73,10 +79,51 @@ public class PolicyService {
 
     Policy savedPolicy = policyRepositoryInterface.savePolicy(policy);
 
-    return mapToDto(savedPolicy);
+    return mapToResponseDTO(savedPolicy);
   }
 
-  private PolicyResponseDto mapToDto(Policy policy) {
+  public PolicyResponseDto retrievePolicyById(String policyId) {
+
+    Policy policy =
+        policyRepositoryInterface
+            .findPolicyById(policyId)
+            .orElseThrow(
+                () ->
+                    new EntityDoesNotExistException(
+                        "Policy with ID: '"
+                            + policyId
+                            + "' does not exist in the database. Please make sure it was provided"
+                            + " correctly."));
+
+    return mapToResponseDTO(policy);
+  }
+
+  public PaginationResponse<PolicyResponseDto> retrievePaginatedPolicy(
+      int pageNumber, int pageSize) {
+
+    List<PolicyResponseDto> listPolicyResponseDto = new ArrayList<PolicyResponseDto>();
+
+    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    Page<Policy> paginatedPolicies = policyRepositoryInterface.getPaginatedPolicy(pageable);
+
+    paginatedPolicies
+        .getContent()
+        .forEach(
+            policy -> {
+              PolicyResponseDto policyResponseDto = mapToResponseDTO(policy);
+
+              listPolicyResponseDto.add(policyResponseDto);
+            });
+
+    return new PaginationResponse<>(
+        listPolicyResponseDto,
+        paginatedPolicies.getPageable().getPageNumber(),
+        paginatedPolicies.getPageable().getPageSize(),
+        paginatedPolicies.getTotalPages(),
+        paginatedPolicies.getTotalElements());
+  }
+
+  private PolicyResponseDto mapToResponseDTO(Policy policy) {
 
     PolicyResponseDto policyResponseDto = new PolicyResponseDto();
     policyResponseDto.setPolicyId(policy.getPolicyId());
