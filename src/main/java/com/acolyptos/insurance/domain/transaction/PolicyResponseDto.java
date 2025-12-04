@@ -1,5 +1,10 @@
 package com.acolyptos.insurance.domain.transaction;
 
+/**
+ * Response DTO class for Policy entity.
+ *
+ * <p>This DTO is typically used to carry the necessary information that will be sent to the client.
+ */
 public class PolicyResponseDto {
 
   private String policyId;
@@ -20,28 +25,8 @@ public class PolicyResponseDto {
 
   private String insurerBindingTransactionReference;
 
-  protected PolicyResponseDto() {}
-
-  public PolicyResponseDto(
-      String policyId,
-      String cocNumber,
-      String agentName,
-      String customerName,
-      String plateNumber,
-      String chassisNumber,
-      String premiumAmount,
-      String saleTimestamp,
-      String insurerBindingTransactionReference) {
-    this.policyId = policyId;
-    this.cocNumber = cocNumber;
-    this.agentName = agentName;
-    this.customerName = customerName;
-    this.plateNumber = plateNumber;
-    this.chassisNumber = chassisNumber;
-    this.premiumAmount = premiumAmount;
-    this.saleTimestamp = saleTimestamp;
-    this.insurerBindingTransactionReference = insurerBindingTransactionReference;
-  }
+  /** Constructs a new {@code PolicyResponseDto}. */
+  public PolicyResponseDto() {}
 
   public void setPolicyId(String policyId) {
     this.policyId = policyId;
