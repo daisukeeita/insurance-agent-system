@@ -1,6 +1,5 @@
 package com.acolyptos.insurance.domain.transaction;
 
-import com.acolyptos.insurance.domain.certificate.CertificateOfCoverage;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -24,15 +23,6 @@ public interface PolicyRepositoryInterface {
    * @return An {@link Optional} containing the {@link Policy} if found, otherwise empty.
    */
   Optional<Policy> findPolicyById(String policyId);
-
-  /**
-   * Finds a single {@link Policy} entity by its linked {@link CertificateOfCoverage}.
-   *
-   * @param cocNumber The COC Number or unique identification number of the Certificate of Coverage
-   *     linked on policy to find.
-   * @return An {@link Optional} containing the {@link Policy} if found, otherwise empty.
-   */
-  Optional<Policy> findPolicyByCocNumber(String cocNumber);
 
   /**
    * Checks if a {@link Policy} entity with the given unique IID exists in the database.
