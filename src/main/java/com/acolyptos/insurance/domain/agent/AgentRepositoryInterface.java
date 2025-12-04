@@ -37,7 +37,7 @@ public interface AgentRepositoryInterface {
    * Finds a single {@link Agent} entity by its unique ID.
    *
    * @param agentId The unique ID of the agent to find.
-   * @return An {@link Optional} containing the {@link Agent if found, otherwise empty.}
+   * @return An {@link Optional} containing the {@link Agent} if found, otherwise empty.
    */
   Optional<Agent> findAgentById(UUID agentId);
 
@@ -45,7 +45,7 @@ public interface AgentRepositoryInterface {
    * Checks if an {@link Agent} entity with the given unique ID exists in the database.
    *
    * @param agentId The unique ID of the agent to check for existence.
-   * @return 'true' if an agent exists with te given unique ID, otherwise 'false'.
+   * @return 'true' if an agent exists with the given unique ID, otherwise 'false'.
    */
   boolean checkAgentIfExistsById(UUID agentId);
 
