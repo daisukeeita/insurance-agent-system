@@ -2,11 +2,13 @@ package com.acolyptos.insurance.presentation.advice;
 
 import com.acolyptos.insurance.domain.exceptions.EntityAlreadyExistsException;
 import com.acolyptos.insurance.domain.exceptions.EntityDoesNotExistException;
+import com.acolyptos.insurance.domain.exceptions.ExternalServiceException;
 import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.response.ErrorResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -64,5 +66,19 @@ public class GlobalExceptionHandler {
         new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, errors);
 
     return errorResponse;
+  }
+
+  @ExceptionHandler(ExternalServiceException.class)
+  public ResponseEntity<ErrorResponse> handleExternalServiceException(
+      ExternalServiceException exception) {
+    Map<String, String> errors = new HashMap<String, String>();
+    errors.put("message", exception.getMessage());
+
+    HttpStatus httpStatus = exception.getHttpStatus();
+    HttpStatus responseStatus = httpStatus != null ? httpStatus : HttpStatus.SERVICE_UNAVAILABLE;
+
+    ErrorResponse errorResponse = new ErrorResponse(responseStatus.value(), responseStatus, errors);
+
+    return new ResponseEntity<ErrorResponse>(errorResponse, responseStatus);
   }
 }
