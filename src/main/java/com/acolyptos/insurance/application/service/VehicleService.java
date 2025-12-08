@@ -29,7 +29,7 @@ public class VehicleService {
 
     return webClient
         .post()
-        .uri(apiParameters)
+        // .uri(apiParameters)
         .bodyValue(vehicleRequestDto)
         .retrieve()
         .onStatus(
@@ -43,7 +43,7 @@ public class VehicleService {
                       body ->
                           Mono.error(
                               new ExternalServiceException(
-                                  "No motor vehicle was found in LTMS or Legacy Data.",
+                                  "No motor vehicle was found in LTMS or Legacy Data. (Service)",
                                   resolvedStatus,
                                   body)));
             })
