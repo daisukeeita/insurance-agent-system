@@ -1,12 +1,23 @@
 package com.acolyptos.insurance.domain.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /** Request DTO class for third-party API request. */
 public class VehicleRequestDto {
 
+  @JsonProperty("chassis_no")
   private String chassis_no;
+
+  @JsonProperty("engine_no")
   private String engine_no;
+
+  @JsonProperty("vin_no")
   private String vin_no;
+
+  @JsonProperty("plate_no")
   private String plate_no;
+
+  @JsonProperty("mv_file_no")
   private String mv_file_no;
 
   /** Constructs a new {@code VehicleRequestDto}. */
@@ -50,5 +61,20 @@ public class VehicleRequestDto {
 
   public String getMvFileNo() {
     return mv_file_no;
+  }
+
+  @Override
+  public String toString() {
+    return "VehicleRequestDto {\n\tchassis_no: "
+        + chassis_no
+        + ",\n\tengine_no: "
+        + engine_no
+        + ",\n\tvin_no: "
+        + vin_no
+        + ",\n\tplate_no: "
+        + plate_no
+        + ",\n\tmv_file_no: "
+        + mv_file_no
+        + "\n}";
   }
 }
