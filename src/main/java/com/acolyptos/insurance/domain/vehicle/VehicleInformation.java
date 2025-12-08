@@ -123,4 +123,188 @@ public class VehicleInformation {
     this.maximumTotalWeight = maximumTotalWeight;
     this.dateFirstRegistration = dateFirstRegistration;
   }
+
+  public void setHistoricVehicle(String historicVehicle) {
+    this.historicVehicle = historicVehicle;
+  }
+
+  public void setEquivalentInertia(int equivalentInertia) {
+    this.equivalentInertia = equivalentInertia;
+  }
+
+  public void setFuelType(String fuelType) {
+    this.fuelType = fuelType;
+  }
+
+  public void setTractionType(String tractionType) {
+    this.tractionType = tractionType;
+  }
+
+  public void setNumberOfAxes(int numberOfAxes) {
+    this.numberOfAxes = numberOfAxes;
+  }
+
+  public void setModelYear(String modelYear) {
+    this.modelYear = modelYear;
+  }
+
+  public void setEngineCapacity(int engineCapacity) {
+    this.engineCapacity = engineCapacity;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+  public void setCategoryType(String categoryType) {
+    this.categoryType = categoryType;
+  }
+
+  public void setChassis(String chassis) {
+    this.chassis = chassis;
+  }
+
+  public void setEngine(String engine) {
+    this.engine = engine;
+  }
+
+  public void setMvFileNumber(String mvFileNumber) {
+    this.mvFileNumber = mvFileNumber;
+  }
+
+  public void setCirculationDate(String circulationDate) {
+    this.circulationDate = circulationDate;
+  }
+
+  public void setColor(String color) {
+    this.color = color;
+  }
+
+  public void setPlateNumber(String plateNumber) {
+    this.plateNumber = plateNumber;
+  }
+
+  public void setManufacturer(String manufacturer) {
+    this.manufacturer = manufacturer;
+  }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+  public void setMileage(int mileage) {
+    this.mileage = mileage;
+  }
+
+  public void setVin(String vin) {
+    this.vin = vin;
+  }
+
+  public void setTurbo(String turbo) {
+    this.turbo = turbo;
+  }
+
+  public void setPresenceOfCatalyticConverter(String presenceOfCatalyticConverter) {
+    this.presenceOfCatalyticConverter = presenceOfCatalyticConverter;
+  }
+
+  public void setMaximumTotalWeight(int maximumTotalWeight) {
+    this.maximumTotalWeight = maximumTotalWeight;
+  }
+
+  public void setDateFirstRegistration(String dateFirstRegistration) {
+    this.dateFirstRegistration = dateFirstRegistration;
+  }
+
+  public String getHistoricVehicle() {
+    return historicVehicle;
+  }
+
+  public int getEquivalentIntertia() {
+    return equivalentInertia;
+  }
+
+  public String getFuelType() {
+    return fuelType;
+  }
+
+  public String getTractionType() {
+    return tractionType;
+  }
+
+  public int getNumberOfAxes() {
+    return numberOfAxes;
+  }
+
+  public String getModelYear() {
+    return modelYear;
+  }
+
+  public int getEngineCapcity() {
+    return engineCapacity;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public String getCategoryType() {
+    return categoryType;
+  }
+
+  public String getChassis() {
+    return chassis;
+  }
+
+  public String getEngine() {
+    return engine;
+  }
+
+  public String getMvFileNumber() {
+    return mvFileNumber;
+  }
+
+  public String getCirculationDate() {
+    return circulationDate;
+  }
+
+  public String getColor() {
+    return color;
+  }
+
+  public String getPlateNumber() {
+    return plateNumber;
+  }
+
+  public String getManufacturer() {
+    return manufacturer;
+  }
+
+  public String getBrand() {
+    return brand;
+  }
+
+  public int getMileage() {
+    return mileage;
+  }
+
+  public String getVin() {
+    return vin;
+  }
+
+  public String getTurbo() {
+    return turbo;
+  }
+
+  public String getPresenceOfCatalyticConverter() {
+    return presenceOfCatalyticConverter;
+  }
+
+  public int getMaximumTotalWeight() {
+    return maximumTotalWeight;
+  }
+
+  public String getDateFirstRegistration() {
+    return dateFirstRegistration;
+  }
 }
