@@ -19,10 +19,10 @@ public class WebClientConfig {
   @Value("${api.thirdparty.uri}")
   private String baseUrl;
 
-  @Value("${api.thirdparty.connect-timeout}")
+  @Value("${api.thirdparty.connection-timeout}")
   private int connectionTimeountMillis;
 
-  @Value("${api.thirdparty.response-timeount-seconds}")
+  @Value("${api.thirdparty.response-timeout-seconds}")
   private int responseTimeoutSeconds;
 
   /**
