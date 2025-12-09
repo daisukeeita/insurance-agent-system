@@ -1,17 +1,22 @@
 package com.acolyptos.insurance.domain.agent;
 
 import com.acolyptos.insurance.domain.insurer.Insurer;
+import com.acolyptos.insurance.domain.role.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -61,6 +66,25 @@ public class Agent {
   @Column(name = "updated_at", nullable = false, updatable = true, insertable = true)
   private LocalDate updatedAt;
 
+  @ManyToMany
+  @JoinTable(
+      name = "agent_roles",
+      joinColumns = @JoinColumn(name = "agent_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> agentRoles = new HashSet<Role>();
+
+  @Column(name = "enabled", nullable = false)
+  private boolean enabled = true;
+
+  @Column(name = "account_non_expired", nullable = false)
+  private boolean accountNonExpired = true;
+
+  @Column(name = "credentials_non_expired", nullable = false)
+  private boolean credentialsNonExpired = true;
+
+  @Column(name = "account_non_locked", nullable = false)
+  private boolean accountNonLocked = true;
+
   /**
    * Default constructor required by the JPA/Hibernate. Protected to prevent direct instantiation.
    */
@@ -88,37 +112,53 @@ public class Agent {
     this.updatedAt = LocalDate.now();
   }
 
-  // public void setAgentId(final UUID agentId) {
-  //   this.agentId = agentId;
-  // }
-  //
-  // public void setInsurer(final Insurer insurer) {
-  //   this.insurer = insurer;
-  // }
-  //
-  // public void setUsername(final String username) {
-  //   this.username = username;
-  // }
-  //
-  // public void setHashedPassword(final String hashedPassword) {
-  //   this.hashedPassword = hashedPassword;
-  // }
-  //
-  // public void setFullName(final String fullName) {
-  //   this.fullName = fullName;
-  // }
-  //
-  // public void setLicenseNumber(final String licenseNumber) {
-  //   this.licenseNumber = licenseNumber;
-  // }
-  //
-  // public void setDateHired(final LocalDate dateHired) {
-  //   this.dateHired = dateHired;
-  // }
-  //
-  // public void setUpdatedAt(final LocalDate updatedAt) {
-  //   this.updatedAt = updatedAt;
-  // }
+  public void setAgentId(final UUID agentId) {
+    this.agentId = agentId;
+  }
+
+  public void setInsurer(final Insurer insurer) {
+    this.insurer = insurer;
+  }
+
+  public void setUsername(final String username) {
+    this.username = username;
+  }
+
+  public void setHashedPassword(final String hashedPassword) {
+    this.hashedPassword = hashedPassword;
+  }
+
+  public void setFullName(final String fullName) {
+    this.fullName = fullName;
+  }
+
+  public void setLicenseNumber(final String licenseNumber) {
+    this.licenseNumber = licenseNumber;
+  }
+
+  public void setDateHired(final LocalDate dateHired) {
+    this.dateHired = dateHired;
+  }
+
+  public void setUpdatedAt(final LocalDate updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setAgentEnable(Boolean enable) {
+    this.enabled = enable;
+  }
+
+  public void setAgentAccountNonExpired(Boolean accountNonExpired) {
+    this.accountNonExpired = accountNonExpired;
+  }
+
+  public void setAgentCredentialsNonExpired(Boolean credentialsNonExpired) {
+    this.credentialsNonExpired = credentialsNonExpired;
+  }
+
+  public void setAgentAccountNonLocked(Boolean accountNonLocked) {
+    this.accountNonLocked = accountNonLocked;
+  }
 
   public UUID getAgentId() {
     return agentId;
@@ -146,6 +186,26 @@ public class Agent {
 
   public LocalDate getDateHired() {
     return dateHired;
+  }
+
+  public Set<Role> getAgentRoles() {
+    return agentRoles;
+  }
+
+  public boolean getAgentEnabled() {
+    return enabled;
+  }
+
+  public boolean getAgentAccountNonExpired() {
+    return accountNonExpired;
+  }
+
+  public boolean getAgentCredentialsNonExpired() {
+    return credentialsNonExpired;
+  }
+
+  public boolean getAgentAccountNonLocked() {
+    return accountNonLocked;
   }
 
   @Override
