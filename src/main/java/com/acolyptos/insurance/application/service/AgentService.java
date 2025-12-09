@@ -18,6 +18,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /** Service class for managing {@link Agent} entities. */
@@ -26,6 +27,7 @@ public class AgentService {
 
   private final AgentRepositoryInterface agentRepositoryInterface;
   private final InsurerRepositoryInterface insurerRepositoryInterface;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * Constructs an {@code AgentService} with required repositories.
@@ -37,9 +39,11 @@ public class AgentService {
    */
   public AgentService(
       final AgentRepositoryInterface agentRepositoryInterface,
-      final InsurerRepositoryInterface insurerRepositoryInterface) {
+      final InsurerRepositoryInterface insurerRepositoryInterface,
+      PasswordEncoder passwordEncoder) {
     this.agentRepositoryInterface = agentRepositoryInterface;
     this.insurerRepositoryInterface = insurerRepositoryInterface;
+    this.passwordEncoder = passwordEncoder;
   }
 
   /**
@@ -74,12 +78,13 @@ public class AgentService {
                             + "' doest not exist in the database. Please make sure it was provided"
                             + " correctly."));
 
-    // TODO: IMPLEMENT HASH PASSWORD BEFORE SAVING THE AGENT TO THE DATABASE.
+    String hashedPassword = passwordEncoder.encode(agentRegisterRequestDto.getPassword());
+
     final Agent agent =
         new Agent(
             insurer,
             agentRegisterRequestDto.getUsername().trim(),
-            agentRegisterRequestDto.getPassword(),
+            hashedPassword,
             agentRegisterRequestDto.getFullName().trim(),
             agentRegisterRequestDto.getLicenseNumber().trim(),
             formatDate(agentRegisterRequestDto.getDateHired().trim()));
