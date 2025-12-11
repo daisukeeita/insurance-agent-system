@@ -24,6 +24,10 @@ public class AgentDetailImplementation implements UserDetails {
         .collect(Collectors.toUnmodifiableSet());
   }
 
+  public Agent getAgent() {
+    return agent;
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
