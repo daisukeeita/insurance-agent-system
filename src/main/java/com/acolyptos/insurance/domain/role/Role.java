@@ -33,7 +33,7 @@ public class Role {
   @Column(name = "role_description", nullable = true)
   private String roleDescription;
 
-  @ManyToMany(mappedBy = "roles")
+  @ManyToMany(mappedBy = "agentRoles")
   private Set<Agent> agents;
 
   /** Constructs a new {@code Role}. */
