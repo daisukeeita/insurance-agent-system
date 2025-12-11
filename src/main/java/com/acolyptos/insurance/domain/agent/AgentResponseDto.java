@@ -1,5 +1,7 @@
 package com.acolyptos.insurance.domain.agent;
 
+import java.util.Set;
+
 /**
  * Class that will be used to filter the details of the Agent entity before sending the Success
  * Response.
@@ -15,6 +17,8 @@ public class AgentResponseDto {
   private String licenseNumber;
 
   private String insurerName;
+
+  private Set<String> agentRoles;
 
   /** The default constructor for this class. */
   public AgentResponseDto() {}
@@ -39,6 +43,10 @@ public class AgentResponseDto {
     this.licenseNumber = licenseNumber;
   }
 
+  public void setRoles(Set<String> agentRoles) {
+    this.agentRoles = agentRoles;
+  }
+
   public String getAgentId() {
     return agentId;
   }
@@ -57,5 +65,9 @@ public class AgentResponseDto {
 
   public String getInsurerName() {
     return insurerName;
+  }
+
+  public Set<String> getAgentRoles() {
+    return agentRoles;
   }
 }
