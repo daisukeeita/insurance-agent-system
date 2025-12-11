@@ -10,10 +10,14 @@ import com.acolyptos.insurance.domain.exceptions.InvalidRequestBodyException;
 import com.acolyptos.insurance.domain.insurer.Insurer;
 import com.acolyptos.insurance.domain.insurer.InsurerRepositoryInterface;
 import com.acolyptos.insurance.domain.response.PaginationResponse;
+import com.acolyptos.insurance.domain.role.Role;
+import com.acolyptos.insurance.domain.role.RoleRepositoryInterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +31,7 @@ public class AgentService {
 
   private final AgentRepositoryInterface agentRepositoryInterface;
   private final InsurerRepositoryInterface insurerRepositoryInterface;
+  private final RoleRepositoryInterface roleRepositoryInterface;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -40,9 +45,11 @@ public class AgentService {
   public AgentService(
       final AgentRepositoryInterface agentRepositoryInterface,
       final InsurerRepositoryInterface insurerRepositoryInterface,
-      PasswordEncoder passwordEncoder) {
+      final RoleRepositoryInterface roleRepositoryInterface,
+      final PasswordEncoder passwordEncoder) {
     this.agentRepositoryInterface = agentRepositoryInterface;
     this.insurerRepositoryInterface = insurerRepositoryInterface;
+    this.roleRepositoryInterface = roleRepositoryInterface;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -78,7 +85,7 @@ public class AgentService {
                             + "' doest not exist in the database. Please make sure it was provided"
                             + " correctly."));
 
-    String hashedPassword = passwordEncoder.encode(agentRegisterRequestDto.getPassword());
+    final String hashedPassword = passwordEncoder.encode(agentRegisterRequestDto.getPassword());
 
     final Agent agent =
         new Agent(
@@ -88,6 +95,21 @@ public class AgentService {
             agentRegisterRequestDto.getFullName().trim(),
             agentRegisterRequestDto.getLicenseNumber().trim(),
             formatDate(agentRegisterRequestDto.getDateHired().trim()));
+
+    for (final String roleName : agentRegisterRequestDto.getRole()) {
+      final Role role =
+          roleRepositoryInterface
+              .findRoleByRoleName(roleName)
+              .orElseThrow(
+                  () ->
+                      new EntityDoesNotExistException(
+                          "Role with the name : '"
+                              + roleName
+                              + "' does not exist in the database. Please make sure it was provided"
+                              + " correctly."));
+
+      agent.getAgentRoles().add(role);
+    }
 
     final Agent savedAgent = agentRepositoryInterface.saveAgent(agent);
 
@@ -204,12 +226,19 @@ public class AgentService {
   }
 
   private AgentResponseDto mapToResponseDto(final Agent agent) {
+    final Set<String> agentRoles = new HashSet<String>();
+    for (final Role role : agent.getAgentRoles()) {
+      final String roleName = role.getRoleName();
+      agentRoles.add(roleName);
+    }
+
     final AgentResponseDto agentResponseDto = new AgentResponseDto();
     agentResponseDto.setAgentId(agent.getAgentId().toString());
     agentResponseDto.setUsername(agent.getUsername());
     agentResponseDto.setFullName(agent.getFullName());
     agentResponseDto.setLicenseNumber(agent.getLicenseNumber());
     agentResponseDto.setInsurerName(agent.getInsurer().getInsurerName());
+    agentResponseDto.setRoles(agentRoles);
 
     return agentResponseDto;
   }
