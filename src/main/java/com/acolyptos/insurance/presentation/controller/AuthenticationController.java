@@ -5,7 +5,10 @@ import com.acolyptos.insurance.domain.agent.AgentDetailImplementation;
 import com.acolyptos.insurance.domain.agent.AgentLoginRequestDto;
 import com.acolyptos.insurance.domain.agent.AgentResponseDto;
 import com.acolyptos.insurance.domain.response.SuccessResponse;
+import com.acolyptos.insurance.domain.role.Role;
 import com.acolyptos.insurance.infrastructure.jwt.JwtUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +48,19 @@ public class AuthenticationController {
       final Agent agent = agentDetails.getAgent();
 
       final String token = jwtUtil.generateToken(agentLoginRequestDto.getUsername());
+
+      final Set<String> agentRoles = new HashSet<String>();
+      for (final Role role : agent.getAgentRoles()) {
+        final String roleName = role.getRoleName();
+        agentRoles.add(roleName);
+      }
       final AgentResponseDto agentResponseDto = new AgentResponseDto();
       agentResponseDto.setAgentId(agent.getAgentId().toString());
       agentResponseDto.setFullName(agent.getFullName());
       agentResponseDto.setUsername(agent.getUsername());
       agentResponseDto.setInsurerName(agent.getInsurer().getInsurerName());
       agentResponseDto.setLicenseNumber(agent.getLicenseNumber());
+      agentResponseDto.setRoles(agentRoles);
 
       final SuccessResponse<AgentResponseDto> successResponse =
           new SuccessResponse<AgentResponseDto>(
