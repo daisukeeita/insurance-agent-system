@@ -1,6 +1,7 @@
 package com.acolyptos.insurance.domain.agent;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -34,6 +35,9 @@ public class AgentRegisterRequestDto {
 
   @NotBlank(message = "Agent's hiring date is required for registration.")
   private String dateHired;
+
+  @NotNull(message = "Agent's Role is request for registration.")
+  private String[] role;
 
   /** Constructs a new {@code AgentRegisterRequestDto}. */
   public AgentRegisterRequestDto() {}
@@ -70,6 +74,10 @@ public class AgentRegisterRequestDto {
     this.dateHired = dateHired;
   }
 
+  public void setRole(final String[] role) {
+    this.role = role;
+  }
+
   public String getUsername() {
     return username;
   }
@@ -104,6 +112,10 @@ public class AgentRegisterRequestDto {
 
   public String getDateHired() {
     return dateHired;
+  }
+
+  public String[] getRole() {
+    return role;
   }
 
   @Override
