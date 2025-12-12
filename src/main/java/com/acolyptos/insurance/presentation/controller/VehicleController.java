@@ -4,6 +4,7 @@ import com.acolyptos.insurance.application.service.VehicleService;
 import com.acolyptos.insurance.domain.response.SuccessResponse;
 import com.acolyptos.insurance.domain.vehicle.VehicleRequestDto;
 import com.acolyptos.insurance.domain.vehicle.VehicleResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class VehicleController {
 
   @PostMapping("/retrieveVehicle")
   public Mono<ResponseEntity<SuccessResponse<VehicleResponseDto>>> findAndRetrieveVehicle(
-      @RequestBody VehicleRequestDto vehicleRequestDto) {
+      @RequestBody @Valid VehicleRequestDto vehicleRequestDto) {
 
     return vehicleService
         .getVehicleInformation(vehicleRequestDto)
