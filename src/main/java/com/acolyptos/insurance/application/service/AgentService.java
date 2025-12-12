@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Service class for managing {@link Agent} entities. */
 @Service
@@ -123,6 +124,7 @@ public class AgentService {
    * @return The {@link AgentResponseDto} of the retrieved agent.
    * @throws EntityDoesNotExistException if no agent with the given username is found.
    */
+  @Transactional(readOnly = true)
   public AgentResponseDto retrieveAgentByUsername(final String username) {
 
     final Agent agent =
@@ -146,6 +148,7 @@ public class AgentService {
    * @return The {@link AgentResponseDto} of the retrieved agent.
    * @throws EntityDoesNotExistException if no agent with the given license number is found.
    */
+  @Transactional(readOnly = true)
   public AgentResponseDto retrieveAgentByLicenseNumber(final String licenseNumber) {
 
     final Agent agent =
@@ -169,6 +172,7 @@ public class AgentService {
    * @return The {@link AgentResponseDto} of the retrived agent.
    * @throws EntityDoesNotExistException if no agent with the given identification number is found.
    */
+  @Transactional(readOnly = true)
   public AgentResponseDto retrieveAgentById(final String agentId) {
 
     if (agentId == null || agentId.trim().isEmpty()) {
