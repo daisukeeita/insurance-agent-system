@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import reactor.netty.http.client.HttpClient;
 
 /** Spring Web Client configuration for calling a third-party API asynchronously. */
@@ -51,5 +53,19 @@ public class WebClientConfig {
         .clientConnector(new ReactorClientHttpConnector(httpClient))
         .baseUrl(baseUrl)
         .build();
+  }
+
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry
+            .addMapping("/**")
+            .allowedOrigins("*") // allow all origins
+            .allowedMethods("*") // allow all HTTP methods
+            .allowedHeaders("*"); // allow all headers
+      }
+    };
   }
 }
