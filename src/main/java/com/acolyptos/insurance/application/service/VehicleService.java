@@ -1,62 +1,31 @@
 package com.acolyptos.insurance.application.service;
 
-import com.acolyptos.insurance.domain.exceptions.ExternalServiceException;
 import com.acolyptos.insurance.domain.vehicle.Vehicle;
 import com.acolyptos.insurance.domain.vehicle.VehicleRequestDto;
 import com.acolyptos.insurance.domain.vehicle.VehicleResponseDto;
-import java.net.UnknownHostException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class VehicleService {
 
-  private final WebClient webClient;
+  private final RestClient restClient;
 
   @Value("${api.thirdparty.parameters}")
   private String apiParameters;
 
-  public VehicleService(WebClient webClient) {
-    this.webClient = webClient;
+  public VehicleService(RestClient restClient) {
+    this.restClient = restClient;
   }
 
-  public Mono<VehicleResponseDto> getVehicleInformation(VehicleRequestDto vehicleRequestDto) {
+  public VehicleResponseDto getVehicleInformation(VehicleRequestDto vehicleRequestDto) {
 
-    return webClient
-        .post()
-        // .uri(apiParameters)
-        .bodyValue(vehicleRequestDto)
-        .retrieve()
-        .onStatus(
-            HttpStatusCode::isError,
-            response -> {
-              HttpStatus resolvedStatus = HttpStatus.valueOf(response.statusCode().value());
+    ResponseEntity<Vehicle> responseEntity =
+        restClient.post().body(vehicleRequestDto).retrieve().toEntity(Vehicle.class);
 
-              return response
-                  .bodyToMono(String.class)
-                  .flatMap(
-                      body ->
-                          Mono.error(
-                              new ExternalServiceException(
-                                  "No motor vehicle was found in LTMS or Legacy Data. (Service)",
-                                  resolvedStatus,
-                                  body)));
-            })
-        .bodyToMono(Vehicle.class)
-        .map(this::mapVehicleToDto)
-        .onErrorResume(
-            error -> {
-              if (error instanceof WebClientException || error instanceof UnknownHostException) {
-                new ExternalServiceException(
-                    "The LTMS is unavailable or offline.", HttpStatus.SERVICE_UNAVAILABLE, null);
-              }
-              return Mono.error(error);
-            });
+    return mapVehicleToDto(responseEntity.getBody());
   }
 
   private VehicleResponseDto mapVehicleToDto(Vehicle vehicle) {
